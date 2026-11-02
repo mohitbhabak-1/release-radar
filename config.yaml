@@ -1,0 +1,45 @@
+lookback_days: 14
+lookahead_days: 45          # only used once Linear is enabled (target-dated work)
+
+github:
+  org: "BitGo"
+  repos: []                 # empty = scan every non-archived repo in the org; otherwise an explicit allow-list
+  exclude_repos: []         # repos to skip when `repos` is empty
+  # Case-insensitive regexes, applied to PR and release titles. Dropped items are listed (with reasons) in data/features.raw.json.
+  exclude_title_patterns:
+    - "^(chore|deps|refactor|ci|test|build|style)(\\(.+\\))?!?:"
+    - "^\\w+\\((deps|scripts|ci|build|release)\\)"
+    - "bump"
+    - "^update api reference"
+  exclude_authors: ["dependabot[bot]", "renovate[bot]", "github-actions[bot]"]
+  exclude_labels: ["chore", "tech-debt", "dependencies"]   # treated as chores in Phase 4 (grouping/filtering)
+  confidential_labels: ["confidential"]                     # dropped at ingestion; never stored or sent anywhere
+  include_releases: true
+  # Prefixes that look like ticket IDs but aren't (UTF-8, SHA-256, BIP-32...). Added to built-in defaults.
+  linear_id_ignore_prefixes: []
+
+linear:
+  enabled: false            # parked for now; Linear ingestion arrives later
+  teams: []
+  feature_labels: []
+  exclude_labels: ["chore", "tech-debt", "bug", "confidential"]
+  include_states: ["In Progress", "In Review", "Done"]
+
+# Roll-ups merge related feature groups into one card. First matching rule wins; `pattern` is a
+# case-insensitive regex tested against PR/release titles. These three are EXAMPLES seeded from
+# the first real run; edit or delete them. Run `npm run refresh -- --from-cache` to re-test.
+rollups:
+  - name: "Zcash Ironwood support"
+    pattern: "ironwood"
+  - name: "Safe wallet recovery"
+    pattern: "safe (wallet )?(keycard|recovery)|recovery.*safe"
+  - name: "Canton Broadridge standing delegation"
+    pattern: "broadridge"
+
+# Empty = the LLM infers a short product-area name per feature.
+# Fill in later to force a canonical list.
+product_areas: []
+
+llm:
+  model: "claude-sonnet-5-5"
+  # base_url: ""            # optional proxy/gateway override
