@@ -27,8 +27,11 @@ const ConfigSchema = z.object({
   rollups: z.array(z.object({ name: z.string().min(1), pattern: z.string().min(1) })).default([]),
   product_areas: z.array(z.string()).default([]),
   llm: z.object({
+    provider: z.enum(["openrouter"]).default("openrouter"),
     model: z.string(),
     base_url: z.string().optional(),
+    batch_size: z.number().int().positive().default(5),
+    concurrency: z.number().int().positive().default(3),
   }),
 });
 
@@ -39,8 +42,9 @@ export function loadConfig(path = resolve(process.cwd(), "config.yaml")): Config
 }
 
 /** Names of required env vars missing for the enabled sources. Never returns values. */
-export function missingEnv(cfg: Config, env = process.env): string[] {
+export function missingEnv(cfg: Config, env = process.env, llm = true): string[] {
   const need = ["GITHUB_TOKEN"];
+  if (llm) need.push("OPENROUTER_API_KEY");
   if (cfg.linear.enabled) need.push("LINEAR_API_KEY");
   return need.filter((k) => !env[k]);
 }

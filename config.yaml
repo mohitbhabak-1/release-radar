@@ -41,5 +41,8 @@ rollups:
 product_areas: []
 
 llm:
-  model: "claude-sonnet-5-5"
-  # base_url: ""            # optional proxy/gateway override
+  provider: "openrouter"           # key in OPENROUTER_API_KEY
+  model: "anthropic/claude-sonnet-5.5"   # OpenRouter slug for Claude Sonnet 5.5
+  # base_url: ""                   # optional gateway override
+  batch_size: 5                    # features summarized per request
+  concurrency: 3

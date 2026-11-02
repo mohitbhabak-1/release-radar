@@ -3,9 +3,13 @@ import { loadConfig, missingEnv } from "./config";
 import { fetchGithubSignals } from "./github";
 import { conventionalScope, filterSignals } from "./filter";
 import { groupSignals, type FeatureGroup } from "./group";
+import { usage } from "./llm";
+import { buildDigest, saveCache, summarizeGroups } from "./summarize";
 import type { Signal } from "./types";
 
 const FROM_CACHE = process.argv.includes("--from-cache");
+const NO_LLM = process.argv.includes("--no-llm");
+const MAX_LLM = process.argv.find((a) => a.startsWith("--max-llm="))?.split("=")[1];
 
 const LIMIT = Number(process.argv.find((a) => a.startsWith("--limit="))?.split("=")[1] ?? 30);
 
@@ -34,7 +38,7 @@ function reviewGroups(groups: FeatureGroup[], dropped: { reason: string }[], tot
 
 async function main() {
   const cfg = loadConfig();
-  const missing = FROM_CACHE ? [] : missingEnv(cfg);
+  const missing = FROM_CACHE ? [] : missingEnv(cfg, process.env, !NO_LLM);
   if (missing.length) {
     console.error(`Missing env vars: ${missing.join(", ")} (see .env.example)`);
     process.exit(1);
@@ -64,7 +68,34 @@ async function main() {
     "data/features.raw.json",
     JSON.stringify({ generatedAt: new Date().toISOString(), lookbackDays: cfg.lookback_days, dropped, groups }, null, 2),
   );
-  console.log("\nWrote data/features.raw.json (no LLM calls made)");
+  console.log("\nWrote data/features.raw.json");
+  if (NO_LLM) return;
+
+  const { records, stats, cache } = await summarizeGroups(cfg, groups, { maxLlm: MAX_LLM ? Number(MAX_LLM) : undefined });
+  const digest = await buildDigest(cfg, records, cache);
+  saveCache(cache);
+
+  writeFileSync(
+    "data/releases.json",
+    JSON.stringify(
+      {
+        generatedAt: new Date().toISOString(),
+        lookbackDays: cfg.lookback_days,
+        refresh: { status: stats.skipped ? "partial" : "ok", sources: [{ name: "github", ok: true }] },
+        scanned: { org: cfg.github.org, repos: [...new Set(groups.flatMap((g) => g.repos))].sort() },
+        digest,
+        features: records,
+      },
+      null,
+      2,
+    ),
+  );
+  console.log(
+    `\nSummaries: ${stats.cacheHits} from cache, ${stats.llmFeatures} summarized by LLM` +
+      (stats.skipped ? `, ${stats.skipped} skipped (--max-llm)` : "") +
+      ` | LLM calls: ${usage.calls}, tokens in/out: ${usage.promptTokens}/${usage.completionTokens}`,
+  );
+  console.log(`Customer-facing: ${records.filter((r) => r.isCustomerFacing).length}/${records.length}. Wrote data/releases.json`);
 }
 
 main().catch((err) => {

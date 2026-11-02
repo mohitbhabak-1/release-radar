@@ -3,14 +3,14 @@
 One-page summary of upcoming and recently shipped features, built from GitHub (Linear later) and summarized with Claude.
 
 ## Status
-Phase 1 (scaffold) only. The pipeline loads config and checks env vars; no data is fetched yet.
+Phases 1, 3, 4, 5 done: GitHub ingestion, grouping, LLM summaries with caching. The page itself is a placeholder (Phase 6).
 
 ## Setup
 1. Node 20+ (`node -v`).
 2. `npm install`
 3. `cp .env.example .env.local` and fill in `GITHUB_TOKEN` (fine-grained, read-only; see `.env.example`).
 4. Review `config.yaml`. By default it scans every non-archived repo in the `BitGo` org.
-5. `npm run refresh`
+5. `npm run refresh` (flags: `--from-cache` reuse saved GitHub signals, `--no-llm` stop after grouping, `--max-llm=N` cap new summaries)
 6. `npm test` / `npm run typecheck`
 
 ## Layout
