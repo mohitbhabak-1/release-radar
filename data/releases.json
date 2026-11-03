@@ -1,10 +1,18 @@
 {
-  "generatedAt": "2026-11-03T00:34:33.114Z",
+  "generatedAt": "2026-11-03T00:39:31.784Z",
   "lookbackDays": 14,
   "refresh": {
     "status": "ok",
-    "lastAttemptAt": "2026-11-03T00:34:33.114Z",
+    "lastAttemptAt": "2026-11-03T00:39:31.784Z",
     "sources": [
+      {
+        "name": "github-prs",
+        "ok": true
+      },
+      {
+        "name": "github-releases",
+        "ok": true
+      },
       {
         "name": "llm-summaries",
         "ok": true
@@ -36,14 +44,14 @@
   },
   "digest": {
     "bullets": [
-      "Confidential tokens go live: six mainnet Zama token pairs can now be shielded and unshielded, ZAMA staking appears for Ethereum wallets, and wrap/unwrap fixes and safety checks cover multisig wallets.",
-      "Wallet recovery widens: Safe wallet keycards can now recover funds on many chains, including Solana, Cardano and Stellar. XLM and HBAR recovery also supports external signers.",
-      "Stacks staking and Zcash get ready for upcoming changes: PoX-5 contracts and early exits are supported, and Zcash wallets are prepped for the NU7 upgrade expected around 5 Nov 2026.",
-      "New asset support: ZAR Universal on ARC and XRP, Grass on Solana for Go Accounts, and Canton Broadridge delegation and settlement flows.",
-      "Safer signing and fewer SDK errors: Stellar transaction explanations show more account changes before signing, and fixes cover SDK message-signing crashes and Express hanging on failed sends."
+      "Safe wallet keycards can now recover funds on many more blockchains, including EVM chains, Solana-style, XLM, Tezos, ICP, HBAR and ALGO. XLM and HBAR recovery also supports external signers.",
+      "Zama confidential tokens are live on mainnet: shield and unshield now work in production, ZAMA can be picked for staking on Ethereum wallets, and wrap and unwrap fixes shipped for multisig wallets.",
+      "New asset support: ZAR Universal on ARC and XRP, and Grass on Solana for Go Accounts. Zcash wallets are also prepared for the NU7 upgrade expected around 5 Nov 2026.",
+      "Stellar transaction explanations now show every account-settings change before signing and flag unmodeled operations. Stellar tokens with digits in their names, like USDM1, now work for withdrawals.",
+      "Staking and trading expand: Stacks staking supports configured PoX-5 contracts, and the Canton SDK supports Broadridge delegation, allocation requests and settlement authorization."
     ],
     "countsByStage": {
-      "Shipped": 43,
+      "Shipped": 36,
       "Rolling out": 0,
       "In review": 0,
       "In development": 0,
@@ -100,29 +108,28 @@
       "id": "rollup-safe-wallet-recovery",
       "groupKind": "rollup",
       "isCustomerFacing": true,
-      "title": "Safe wallet recovery across many coins",
-      "oneLiner": "Safe wallet keycards can now be used to recover funds on EVM chains, STX, AVAXC, Cosmos, SOL, ADA, XLM, XTZ, ICP, HBAR and ALGO.",
-      "whyItMatters": "Customers with Safe wallets can recover funds from a keycard on many more blockchains. Offline recovery doesn't auto-broadcast, and recovery fails safely when keys don't match.",
+      "title": "Recover Safe wallets across more blockchains",
+      "oneLiner": "Safe wallet keycards can now be used to recover funds on many more coins, including EVM chains, Solana-style, XLM, Tezos, ICP, HBAR and ALGO.",
+      "whyItMatters": "Customers holding Safe wallets can recover funds across many more chains. Offline recovery avoids auto-broadcasting transactions, and recovery fails safely if the provided keys don't match the wallet.",
       "audience": [
-        "Institutional clients",
         "Wallet API developers",
+        "Institutional clients",
         "Operations"
       ],
       "productArea": "Wallets & Custody",
       "stage": "Shipped",
       "expectedDate": "2026-11-02",
-      "confidence": "high",
+      "confidence": "medium",
       "needsAttention": {
-        "pmm": true,
+        "pmm": false,
         "design": false,
         "docs": true
       },
-      "owner": "pranishnepal, danielpeng1, yashaanand",
+      "owner": "pranishnepal, danielpeng1",
       "repos": [
         "BitGoJS"
       ],
       "linearIds": [
-        "SDK-6",
         "WCN-2732",
         "WCN-2879",
         "WCN-2882",
@@ -161,10 +168,6 @@
         {
           "label": "PR BitGoJS#10018",
           "url": "https://github.com/BitGo/BitGoJS/pull/10018"
-        },
-        {
-          "label": "PR BitGoJS#9930",
-          "url": "https://github.com/BitGo/BitGoJS/pull/9930"
         }
       ],
       "signals": [
@@ -228,15 +231,6 @@
           "title": "feat: enable Safe recovery for EVM tokens",
           "url": "https://github.com/BitGo/BitGoJS/pull/10018",
           "date": "2026-10-22T13:05:20Z",
-          "status": "Merged",
-          "labels": []
-        },
-        {
-          "source": "github_pr",
-          "id": "BitGoJS#9930",
-          "title": "feat: RecoveryKeyMismatchError for address coins",
-          "url": "https://github.com/BitGo/BitGoJS/pull/9930",
-          "date": "2026-10-19T15:40:13Z",
           "status": "Merged",
           "labels": []
         }
@@ -1055,22 +1049,21 @@
       "id": "si-1971",
       "groupKind": "ticket",
       "isCustomerFacing": true,
-      "title": "Safer PoX-5 early exits for custodial wallets",
-      "oneLiner": "Offline vault and descriptor wallets now check spend rules and can explain and half-sign PoX-5 early exits before signing.",
-      "whyItMatters": "Customers can exit PoX-5 lockups early using the Offline Vault Console. Added checks before signing help prevent invalid or unsafe spends, for both early and late exits.",
+      "title": "Spend-rule checks for descriptor wallet signing",
+      "oneLiner": "Descriptor wallets now check the policy's spend rules (timing, sequence, preimage, single lockup input) before the SDK signs a PoX-5 exit.",
+      "whyItMatters": "Hot descriptor wallets previously signed PoX-5 exits without these checks. Adding them makes sure invalid exits are blocked before signing, which matches the protection the offline vault already has.",
       "audience": [
-        "Institutional clients",
-        "Custody operations",
-        "Wallet API developers"
+        "Wallet API developers",
+        "Institutional clients"
       ],
-      "productArea": "Staking & DeFi",
+      "productArea": "Security & Key Management",
       "stage": "Shipped",
       "expectedDate": "2026-10-28",
       "confidence": "medium",
       "needsAttention": {
         "pmm": false,
         "design": false,
-        "docs": true
+        "docs": false
       },
       "owner": "OttoAllmendinger",
       "repos": [
@@ -1084,10 +1077,6 @@
         {
           "label": "PR BitGoJS#9991",
           "url": "https://github.com/BitGo/BitGoJS/pull/9991"
-        },
-        {
-          "label": "PR BitGoJS#9987",
-          "url": "https://github.com/BitGo/BitGoJS/pull/9987"
         }
       ],
       "signals": [
@@ -1097,15 +1086,6 @@
           "title": "fix(abstract-utxo): check the descriptor policy spend rules when a descriptor wallet signs",
           "url": "https://github.com/BitGo/BitGoJS/pull/9991",
           "date": "2026-10-28T12:27:19Z",
-          "status": "Merged",
-          "labels": []
-        },
-        {
-          "source": "github_pr",
-          "id": "BitGoJS#9987",
-          "title": "feat(abstract-utxo): explain and half-sign PoX-5 early exits in offlineVault",
-          "url": "https://github.com/BitGo/BitGoJS/pull/9987",
-          "date": "2026-10-19T08:16:55Z",
           "status": "Merged",
           "labels": []
         }
@@ -1320,15 +1300,14 @@
     {
       "id": "cshld-2073",
       "groupKind": "ticket",
-      "isCustomerFacing": true,
-      "title": "Zcash v6 transaction size calculation support",
-      "oneLiner": "Zcash v6 (Ironwood) unsigned transactions can now be extracted correctly, so their size can be calculated instead of failing.",
-      "whyItMatters": "This enables a more accurate fee check on pending approvals for Zcash v6 transactions. It replaces an approximate size measure and may later support integrity checks.",
+      "isCustomerFacing": false,
+      "title": "Transaction size calculation for Zcash v6",
+      "oneLiner": "The underlying library can now return the unsigned Zcash v6 transaction so its size can be calculated, instead of failing.",
+      "whyItMatters": "It lets the wallet platform check fees on pending approvals using the real transaction size rather than an approximation. This is internal plumbing with no direct customer interface.",
       "audience": [
-        "Wallet API developers",
-        "Institutional clients"
+        "Operations"
       ],
-      "productArea": "Asset Support",
+      "productArea": "Platform & Infrastructure",
       "stage": "Shipped",
       "expectedDate": "2026-10-27",
       "confidence": "medium",
@@ -1344,7 +1323,6 @@
       "linearIds": [
         "CSHLD-2073",
         "CSHLD-786",
-        "RUSTSEC-2026",
         "ZIP-243",
         "ZIP-244"
       ],
@@ -1614,29 +1592,27 @@
       "id": "rollup-canton-broadridge-standing-delegation",
       "groupKind": "rollup",
       "isCustomerFacing": true,
-      "title": "Canton Broadridge delegation and settlement support",
-      "oneLiner": "The SDK now supports Broadridge standing delegation on Canton, plus allocation and settlement authorization flows and receive-only allocations for cross-issuer trades.",
-      "whyItMatters": "Lets customers' developers build and sign Broadridge-related Canton transactions, including cross-issuer delivery-versus-payment settlements, through the BitGo SDK. This extends BitGo's Canton coverage for institutional settlement workflows.",
+      "title": "Canton support for Broadridge delegation and settlement",
+      "oneLiner": "The Canton SDK now supports Broadridge standing delegation, allocation requests and settlement authorization transactions, including reading the responses.",
+      "whyItMatters": "Clients using Canton with Broadridge can set up standing delegations and authorize settlements through BitGo. This extends Canton support to Broadridge's settlement workflows.",
       "audience": [
-        "Wallet API developers",
-        "Institutional clients"
+        "Institutional clients",
+        "Wallet API developers"
       ],
-      "productArea": "Asset Support",
+      "productArea": "Go Accounts & Trading",
       "stage": "Shipped",
       "expectedDate": "2026-10-26",
       "confidence": "medium",
       "needsAttention": {
-        "pmm": false,
+        "pmm": true,
         "design": false,
         "docs": true
       },
-      "owner": "ravibitgo, hrishikeshjain",
+      "owner": "ravibitgo",
       "repos": [
         "BitGoJS"
       ],
       "linearIds": [
-        "CHALO-1862",
-        "CHALO-1866",
         "CHALO-1875",
         "CHALO-1921",
         "CHALO-1960",
@@ -1655,10 +1631,6 @@
         {
           "label": "PR BitGoJS#10026",
           "url": "https://github.com/BitGo/BitGoJS/pull/10026"
-        },
-        {
-          "label": "PR BitGoJS#10003",
-          "url": "https://github.com/BitGo/BitGoJS/pull/10003"
         }
       ],
       "signals": [
@@ -1686,15 +1658,6 @@
           "title": "feat(sdk-coin-canton): support Broadridge allocation and settlement authorization flows",
           "url": "https://github.com/BitGo/BitGoJS/pull/10026",
           "date": "2026-10-22T10:01:22Z",
-          "status": "Merged",
-          "labels": []
-        },
-        {
-          "source": "github_pr",
-          "id": "BitGoJS#10003",
-          "title": "feat(sdk-coin-canton): support receive-only V2 allocate",
-          "url": "https://github.com/BitGo/BitGoJS/pull/10003",
-          "date": "2026-10-19T11:50:40Z",
           "status": "Merged",
           "labels": []
         }
@@ -2302,14 +2265,13 @@
       "id": "chalo-1603",
       "groupKind": "ticket",
       "isCustomerFacing": true,
-      "title": "Solana v1 transaction version now honored in SDK",
-      "oneLiner": "The SDK now passes a requested Solana transaction version (v0 or v1) through to the wallet platform. Before, it silently dropped the setting.",
-      "whyItMatters": "Developers asking for Solana v1 payments always got v0 transactions with no error or warning. This fix lets integrators build the transaction version they request.",
+      "title": "Solana v1 transactions now honored in payments",
+      "oneLiner": "When developers request a Solana v1 transaction version, the SDK now passes it through. Before, it was silently dropped and v0 was used.",
+      "whyItMatters": "Developers asking for Solana v1 payments previously got v0 transactions with no error or warning. Now the requested version is respected.",
       "audience": [
-        "Wallet API developers",
-        "Institutional clients"
+        "Wallet API developers"
       ],
-      "productArea": "Developer Platform",
+      "productArea": "Asset Support",
       "stage": "Shipped",
       "expectedDate": "2026-10-22",
       "confidence": "high",
@@ -2323,8 +2285,7 @@
         "BitGoJS"
       ],
       "linearIds": [
-        "CHALO-1603",
-        "SIMD-0296"
+        "CHALO-1603"
       ],
       "links": [
         {
@@ -2607,312 +2568,6 @@
           "title": "fix: derive safe MPC child at UTF-8 path bytes",
           "url": "https://github.com/BitGo/BitGoJS/pull/10013",
           "date": "2026-10-20T19:52:55Z",
-          "status": "Merged",
-          "labels": []
-        }
-      ]
-    },
-    {
-      "id": "chalo-1256",
-      "groupKind": "ticket",
-      "isCustomerFacing": true,
-      "title": "ERC-7984 shield/unshield checks for multisig ETH wallets",
-      "oneLiner": "Adds transaction verification safeguards so custodial Ethereum multi-signature wallets can safely perform ERC-7984 shield and unshield operations, including approval checks and rejection of unexpected recipients.",
-      "whyItMatters": "Extends confidential-token shield/unshield support to custodial ETH multi-sig wallets. The added checks help block tampered or mislabeled approvals before signing, which reduces the risk of a compromised server altering a transaction.",
-      "audience": [
-        "Custody clients",
-        "Wallet API developers",
-        "SDK developers"
-      ],
-      "productArea": "Security & Key Management",
-      "stage": "Shipped",
-      "expectedDate": "2026-10-19",
-      "confidence": "medium",
-      "needsAttention": {
-        "pmm": false,
-        "design": false,
-        "docs": true
-      },
-      "owner": "0xPrabh",
-      "repos": [
-        "BitGoJS"
-      ],
-      "linearIds": [
-        "CHALO-1256",
-        "CHALO-1794",
-        "CHALO-1878",
-        "CHALO-1879",
-        "CHALO-1880",
-        "CHALO-1881",
-        "CHALO-1882"
-      ],
-      "links": [
-        {
-          "label": "PR BitGoJS#10011",
-          "url": "https://github.com/BitGo/BitGoJS/pull/10011"
-        },
-        {
-          "label": "PR BitGoJS#10010",
-          "url": "https://github.com/BitGo/BitGoJS/pull/10010"
-        },
-        {
-          "label": "PR BitGoJS#10006",
-          "url": "https://github.com/BitGo/BitGoJS/pull/10006"
-        }
-      ],
-      "signals": [
-        {
-          "source": "github_pr",
-          "id": "BitGoJS#10011",
-          "title": "fix(sdk-core): reject recipients for finalizeUnwrap sendMany (CHALO-1882)",
-          "url": "https://github.com/BitGo/BitGoJS/pull/10011",
-          "date": "2026-10-19T17:42:10Z",
-          "status": "Merged",
-          "labels": []
-        },
-        {
-          "source": "github_pr",
-          "id": "BitGoJS#10010",
-          "title": "fix(abstract-eth): apply the wrapper-approve relabel guard to multi-sig wallets (CHALO-1881)",
-          "url": "https://github.com/BitGo/BitGoJS/pull/10010",
-          "date": "2026-10-19T14:57:18Z",
-          "status": "Merged",
-          "labels": []
-        },
-        {
-          "source": "github_pr",
-          "id": "BitGoJS#10006",
-          "title": "feat(abstract-eth): verify multisig wrapApprove txnRequests (CHALO-1879)",
-          "url": "https://github.com/BitGo/BitGoJS/pull/10006",
-          "date": "2026-10-19T14:14:24Z",
-          "status": "Merged",
-          "labels": []
-        }
-      ]
-    },
-    {
-      "id": "wci-924",
-      "groupKind": "ticket",
-      "isCustomerFacing": true,
-      "title": "EdDSA MPCv2 signing in advanced wallets",
-      "oneLiner": "Adds EdDSA multi-party signing support, in three rounds, to the master Express service for advanced wallets, mirroring the existing ECDSA flow.",
-      "whyItMatters": "Lets advanced wallets sign with EdDSA-based assets using the newer MPC protocol. Out-of-order signing rounds produce clear errors. Customer impact is inferred from the PR description and may be limited to self-hosted setups.",
-      "audience": [
-        "Advanced wallet operators",
-        "Wallet API developers"
-      ],
-      "productArea": "Wallets & Custody",
-      "stage": "Shipped",
-      "expectedDate": "2026-10-19",
-      "confidence": "medium",
-      "needsAttention": {
-        "pmm": false,
-        "design": false,
-        "docs": true
-      },
-      "owner": "vibhavgo",
-      "repos": [
-        "advanced-wallets"
-      ],
-      "linearIds": [
-        "WCI-924",
-        "WCI-925"
-      ],
-      "links": [
-        {
-          "label": "PR advanced-wallets#279",
-          "url": "https://github.com/BitGo/advanced-wallets/pull/279"
-        }
-      ],
-      "signals": [
-        {
-          "source": "github_pr",
-          "id": "advanced-wallets#279",
-          "title": "feat: add eddsa mpcv2 custom signers in master express",
-          "url": "https://github.com/BitGo/advanced-wallets/pull/279",
-          "date": "2026-10-19T14:29:55Z",
-          "status": "Merged",
-          "labels": []
-        }
-      ]
-    },
-    {
-      "id": "cshld-1927",
-      "groupKind": "ticket",
-      "isCustomerFacing": true,
-      "title": "Fix broken HyperEVM testnet explorer links",
-      "oneLiner": "HyperEVM testnet (thype) transaction and address links now open hyperscan.sh. The old explorer shut down, so those links returned 404 errors.",
-      "whyItMatters": "Users and developers can view testnet transactions and addresses again. The new explorer's indexer may lag, according to a caveat in the PR.",
-      "audience": [
-        "Wallet users",
-        "SDK developers"
-      ],
-      "productArea": "Asset Support",
-      "stage": "Shipped",
-      "expectedDate": "2026-10-19",
-      "confidence": "medium",
-      "needsAttention": {
-        "pmm": false,
-        "design": false,
-        "docs": false
-      },
-      "owner": "mukeshsp",
-      "repos": [
-        "BitGoJS"
-      ],
-      "linearIds": [
-        "CSHLD-1927"
-      ],
-      "links": [
-        {
-          "label": "PR BitGoJS#10005",
-          "url": "https://github.com/BitGo/BitGoJS/pull/10005"
-        }
-      ],
-      "signals": [
-        {
-          "source": "github_pr",
-          "id": "BitGoJS#10005",
-          "title": "fix(statics): repoint hypeevm testnet explorer urls to hyperscan.sh",
-          "url": "https://github.com/BitGo/BitGoJS/pull/10005",
-          "date": "2026-10-19T14:07:15Z",
-          "status": "Merged",
-          "labels": []
-        }
-      ]
-    },
-    {
-      "id": "chalo-1850",
-      "groupKind": "ticket",
-      "isCustomerFacing": true,
-      "title": "Canton participant allow-list command builders",
-      "oneLiner": "Adds SDK helpers to build Canton v3 commands that add or remove wallets on a participant's allow-list, using end-investor credentials.",
-      "whyItMatters": "Lets developers manage allow-lists for DTCC Canton v3 participants in code, with identifier validation. This supports regulated, permissioned Canton workflows.",
-      "audience": [
-        "SDK developers",
-        "Institutional clients"
-      ],
-      "productArea": "Asset Support",
-      "stage": "Shipped",
-      "expectedDate": "2026-10-19",
-      "confidence": "medium",
-      "needsAttention": {
-        "pmm": false,
-        "design": false,
-        "docs": true
-      },
-      "owner": "ravibitgo",
-      "repos": [
-        "BitGoJS"
-      ],
-      "linearIds": [
-        "CHALO-1850"
-      ],
-      "links": [
-        {
-          "label": "PR BitGoJS#10001",
-          "url": "https://github.com/BitGo/BitGoJS/pull/10001"
-        }
-      ],
-      "signals": [
-        {
-          "source": "github_pr",
-          "id": "BitGoJS#10001",
-          "title": "feat(sdk-coin-canton): add participant allow-list command builders",
-          "url": "https://github.com/BitGo/BitGoJS/pull/10001",
-          "date": "2026-10-19T10:39:51Z",
-          "status": "Merged",
-          "labels": []
-        }
-      ]
-    },
-    {
-      "id": "wci-1949",
-      "groupKind": "ticket",
-      "isCustomerFacing": true,
-      "title": "Multi-spend shielded Zcash signing support",
-      "oneLiner": "Updates the signing logic for shielded Zcash transactions so one transaction can sign several spends at once, instead of only one.",
-      "whyItMatters": "Supports onboarding of Zcash privacy transactions that need multiple spends. The PR cites a critical delivery timeline.",
-      "audience": [
-        "SDK developers",
-        "Institutional clients"
-      ],
-      "productArea": "Asset Support",
-      "stage": "Shipped",
-      "expectedDate": "2026-10-19",
-      "confidence": "medium",
-      "needsAttention": {
-        "pmm": false,
-        "design": false,
-        "docs": false
-      },
-      "owner": "kisslove-dewangan",
-      "repos": [
-        "BitGoJS"
-      ],
-      "linearIds": [
-        "WCI-1949",
-        "WCI-1963"
-      ],
-      "links": [
-        {
-          "label": "PR BitGoJS#9998",
-          "url": "https://github.com/BitGo/BitGoJS/pull/9998"
-        }
-      ],
-      "signals": [
-        {
-          "source": "github_pr",
-          "id": "BitGoJS#9998",
-          "title": "feat(sdk-core): redpallas multi-spend array share helpers",
-          "url": "https://github.com/BitGo/BitGoJS/pull/9998",
-          "date": "2026-10-19T07:56:12Z",
-          "status": "Merged",
-          "labels": []
-        }
-      ]
-    },
-    {
-      "id": "sc-573",
-      "groupKind": "ticket",
-      "isCustomerFacing": true,
-      "title": "SUI recovery and sweep move to gRPC",
-      "oneLiner": "The SDK now talks to SUI nodes over gRPC instead of the deprecated JSON-RPC, keeping SUI recovery and sweep flows working.",
-      "whyItMatters": "Sui is retiring JSON-RPC and public providers will follow. Without this change, SUI recovery and sweep flows would break. Developers get a new per-environment gRPC endpoint setting.",
-      "audience": [
-        "Wallet API developers",
-        "SDK users",
-        "Operations"
-      ],
-      "productArea": "Wallets & Custody",
-      "stage": "Shipped",
-      "expectedDate": "2026-10-19",
-      "confidence": "high",
-      "needsAttention": {
-        "pmm": false,
-        "design": false,
-        "docs": true
-      },
-      "owner": "prajwalu142",
-      "repos": [
-        "BitGoJS"
-      ],
-      "linearIds": [
-        "SC-573"
-      ],
-      "links": [
-        {
-          "label": "PR BitGoJS#9977",
-          "url": "https://github.com/BitGo/BitGoJS/pull/9977"
-        }
-      ],
-      "signals": [
-        {
-          "source": "github_pr",
-          "id": "BitGoJS#9977",
-          "title": "feat(sdk-coin-sui): migrate node calls from JSON-RPC to gRPC",
-          "url": "https://github.com/BitGo/BitGoJS/pull/9977",
-          "date": "2026-10-19T05:27:25Z",
           "status": "Merged",
           "labels": []
         }
