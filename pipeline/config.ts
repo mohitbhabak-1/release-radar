@@ -20,6 +20,8 @@ const ConfigSchema = z.object({
     exclude_labels: z.array(z.string()).default([]),
     confidential_labels: z.array(z.string()).default(["confidential"]),
     include_releases: z.boolean().default(true),
+    include_open_prs: z.boolean().default(true),
+    open_pr_labels: z.array(z.string()).default(["feature-flag", "release"]),
     linear_id_ignore_prefixes: z.array(z.string()).default([]),
   }),
   linear: z.object({
@@ -27,6 +29,7 @@ const ConfigSchema = z.object({
     teams: z.array(z.string()).default([]),
     feature_labels: z.array(z.string()).default([]),
     exclude_labels: z.array(z.string()).default([]),
+    confidential_labels: z.array(z.string()).default(["confidential"]),
     include_states: z.array(z.string()).default([]),
   }),
   rollups: z.array(z.object({ name: z.string().min(1), pattern: z.string().min(1) })).default([]),

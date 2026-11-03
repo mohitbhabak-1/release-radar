@@ -25,6 +25,7 @@ export function isVersionBumpOnly(body: string): boolean {
 export function filterSignals(signals: Signal[], cfg: Config): { kept: Signal[]; dropped: Dropped[] } {
   const patterns = cfg.github.exclude_title_patterns.map((p) => ({ src: p, re: new RegExp(p, "i") }));
   const labels = new Set(cfg.github.exclude_labels.map((l) => l.toLowerCase()));
+  const linearLabels = new Set(cfg.linear.exclude_labels.map((l) => l.toLowerCase()));
   const authors = new Set(cfg.github.exclude_authors.map((a) => a.toLowerCase()));
   const kept: Signal[] = [];
   const dropped: Dropped[] = [];
@@ -39,7 +40,8 @@ export function filterSignals(signals: Signal[], cfg: Config): { kept: Signal[];
   function dropReason(s: Signal): string | undefined {
     if (s.owner && authors.has(s.owner.toLowerCase())) return `author: ${s.owner}`;
     if (s.source === "github_release" && isVersionBumpOnly(s.body)) return "release is only package version bumps";
-    const label = s.labels.find((l) => labels.has(l.toLowerCase()));
+    const deny = s.source.startsWith("linear") ? linearLabels : labels;
+    const label = s.labels.find((l) => deny.has(l.toLowerCase()));
     if (label) return `label: ${label}`;
     const hit = patterns.find((p) => p.re.test(s.title));
     if (hit) return `title matches ${hit.src}`;

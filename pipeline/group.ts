@@ -3,14 +3,16 @@ import type { Signal } from "./types";
 
 export type FeatureGroup = {
   id: string;
-  /** rollup = merged by a config rule; ticket = linked by shared Linear ID; cluster = near-identical PR titles in one repo; pr / release = standalone */
-  kind: "ticket" | "cluster" | "pr" | "release" | "rollup";
+  /** project = anchored on a Linear project; rollup = merged by a config rule; ticket = linked by shared Linear ID; cluster = near-identical PR titles in one repo; pr / release = standalone */
+  kind: "project" | "ticket" | "cluster" | "pr" | "release" | "rollup";
   title: string; // representative raw title (the LLM writes the plain-English one in Phase 5)
   signals: Signal[];
   linearIds: string[];
   repos: string[];
   owners: string[];
   latestDate: string;
+  /** Planned date from a Linear project, when one exists (used as the expected date for unshipped work). */
+  targetDate?: string;
   changeTypes: Record<string, number>;
   hasFeatureSignal: boolean;
   confidence: "high" | "medium" | "low";
@@ -54,10 +56,28 @@ export function groupSignals(input: Signal[], rollups: { name: string; pattern: 
     }
   });
 
+  // 1b. Linear projects are the strongest grouping: everything in one project is one feature.
+  const byProject = new Map<string, number>();
+  prs.forEach((s, i) => {
+    if (!s.projectId) return;
+    const j = byProject.get(s.projectId);
+    if (j === undefined) byProject.set(s.projectId, i);
+    else uf.union(i, j);
+  });
+
+  // 1c. Linear attachments that point at a pull request tie the ticket to that PR.
+  const byId = new Map(prs.map((s, i) => [s.id, i]));
+  prs.forEach((s, i) => {
+    for (const ref of s.refs ?? []) {
+      const j = byId.get(ref);
+      if (j !== undefined) uf.union(i, j);
+    }
+  });
+
   // 2. Repeated near-identical titles with no ticket (e.g. automated onboarding PRs) => one cluster.
   const byTitle = new Map<string, number>();
   prs.forEach((s, i) => {
-    if (s.linearIds.length) return;
+    if (s.linearIds.length || s.projectId) return;
     const key = `${s.team}|${normalizeTitle(s.title)}`;
     const j = byTitle.get(key);
     if (j === undefined) byTitle.set(key, i);
@@ -118,13 +138,14 @@ function build(signals: Signal[], shippedIn: FeatureGroup["shippedIn"], rollupNa
   const rep = sorted.find(isFeat) ?? sorted[0];
 
   const isRelease = sorted.every((s) => s.source === "github_release");
-  const kind: FeatureGroup["kind"] = rollupName ? "rollup" : isRelease ? "release" : linearIds.length ? "ticket" : sorted.length > 1 ? "cluster" : "pr";
+  const isProject = sorted.some((s) => s.source === "linear_project");
+  const kind: FeatureGroup["kind"] = rollupName ? "rollup" : isProject ? "project" : isRelease ? "release" : linearIds.length ? "ticket" : sorted.length > 1 ? "cluster" : "pr";
   const confidence: FeatureGroup["confidence"] =
-    (kind === "ticket" || kind === "rollup") && hasFeatureSignal ? "high" : hasFeatureSignal || kind === "ticket" || kind === "rollup" ? "medium" : "low";
+    isProject ? "high" : (kind === "ticket" || kind === "rollup") && hasFeatureSignal ? "high" : hasFeatureSignal || kind === "ticket" || kind === "rollup" ? "medium" : "low";
 
   const first = sorted[sorted.length - 1];
   return {
-    id: rollupName ? `rollup-${slug(rollupName)}` : slug(linearIds[0] ?? first.id),
+    id: rollupName ? `rollup-${slug(rollupName)}` : slug(sorted.find((s) => s.source === "linear_project")?.title ? `project-${sorted.find((s) => s.source === "linear_project")!.id.slice(8, 16)}` : (linearIds[0] ?? first.id)),
     kind,
     title: rollupName ?? rep.title,
     signals: sorted,
@@ -132,6 +153,7 @@ function build(signals: Signal[], shippedIn: FeatureGroup["shippedIn"], rollupNa
     repos: [...new Set(sorted.map((s) => s.team).filter((t): t is string => !!t))],
     owners: [...new Set(sorted.map((s) => s.owner).filter((o): o is string => !!o))],
     latestDate: sorted[0].date,
+    targetDate: sorted.filter((s) => s.source === "linear_project" && s.status !== "Project completed").map((s) => s.date).sort()[0],
     changeTypes,
     hasFeatureSignal,
     confidence,

@@ -12,9 +12,12 @@ github:
     - "bump"
     - "^update api reference"
   exclude_authors: ["dependabot[bot]", "renovate[bot]", "github-actions[bot]"]
-  exclude_labels: ["chore", "tech-debt", "dependencies"]   # treated as chores in Phase 4 (grouping/filtering)
+  exclude_labels: ["chore", "tech-debt", "dependencies", "do-not-merge", "wip", "stale"]   # treated as chores in Phase 4 (grouping/filtering)
   confidential_labels: ["confidential"]                     # dropped at ingestion; never stored or sent anywhere
   include_releases: true
+  # Open, non-draft PRs that are approved (=> In review) or carry one of these labels (=> In development)
+  include_open_prs: true
+  open_pr_labels: ["feature-flag", "release"]
   # Prefixes that look like ticket IDs but aren't (UTF-8, SHA-256, BIP-32...). Added to built-in defaults.
   linear_id_ignore_prefixes: []
 
@@ -22,7 +25,8 @@ linear:
   enabled: false            # parked for now; Linear ingestion arrives later
   teams: []
   feature_labels: []
-  exclude_labels: ["chore", "tech-debt", "bug", "confidential"]
+  exclude_labels: ["chore", "tech-debt", "bug"]      # treated as chores
+  confidential_labels: ["confidential"]             # dropped at ingestion, along with GitHub work that references them
   include_states: ["In Progress", "In Review", "Done"]
 
 # Roll-ups merge related feature groups into one card. First matching rule wins; `pattern` is a

@@ -1,6 +1,7 @@
 import { existsSync, mkdirSync, readFileSync, writeFileSync } from "node:fs";
 import { loadConfig, missingEnv } from "./config";
 import { fetchGithubSignals } from "./github";
+import { dropConfidentialLinks, fetchLinearSignals } from "./linear";
 import { conventionalScope, filterSignals } from "./filter";
 import { groupSignals, type FeatureGroup } from "./group";
 import { usage } from "./llm";
@@ -58,6 +59,17 @@ async function main() {
     const gh = await fetchGithubSignals(cfg, process.env.GITHUB_TOKEN!);
     signals = gh.signals;
     sources.push(...gh.sources);
+
+    if (cfg.linear.enabled) {
+      // Linear is supplementary for now: if it fails the page still gets the GitHub picture, flagged amber.
+      try {
+        const lin = await fetchLinearSignals(cfg, process.env.LINEAR_API_KEY!);
+        signals = [...dropConfidentialLinks(signals, lin.confidentialIds), ...lin.signals];
+        sources.push({ name: "linear", ok: true });
+      } catch (e) {
+        sources.push({ name: "linear", ok: false, error: errMsg(e) });
+      }
+    }
     // Local scratch output (gitignored). Contains truncated PR bodies, so keep it out of git.
     mkdirSync(".cache", { recursive: true });
     writeFileSync(".cache/signals.json", JSON.stringify(signals, null, 2));

@@ -1,5 +1,5 @@
 import type { Config } from "./config";
-import { normalizePr, normalizeRelease, type RawPr, type RawRelease } from "./normalize";
+import { normalizeOpenPr, normalizePr, normalizeRelease, type RawPr, type RawRelease } from "./normalize";
 import { errMsg, type SourceStatus } from "./status";
 import type { Signal } from "./types";
 
@@ -95,7 +95,7 @@ query($q: String!, $after: String) {
     pageInfo { hasNextPage endCursor }
     nodes {
       ... on PullRequest {
-        number title body url mergedAt baseRefName headRefName
+        number title body url mergedAt updatedAt isDraft reviewDecision baseRefName headRefName
         author { login }
         labels(first: 30) { nodes { name } }
         repository { name isArchived defaultBranchRef { name } }
@@ -104,11 +104,15 @@ query($q: String!, $after: String) {
   }
 }`;
 
-type PrNode = RawPr & { baseRefName: string; repository: RawPr["repository"] & { isArchived: boolean; defaultBranchRef: { name: string } | null } };
+type PrNode = RawPr & { baseRefName: string; updatedAt: string; isDraft: boolean; reviewDecision: "APPROVED" | "CHANGES_REQUESTED" | "REVIEW_REQUIRED" | null; repository: RawPr["repository"] & { isArchived: boolean; defaultBranchRef: { name: string } | null } };
 type PrSearch = { search: { issueCount: number; pageInfo: { hasNextPage: boolean; endCursor: string | null }; nodes: (PrNode | null)[] } };
 
-async function searchMergedPrs(token: string, scope: string, from: string, to: string, out: PrNode[]): Promise<void> {
-  const q = `${scope} is:pr is:merged archived:false merged:${from}..${to}`;
+type PrKind = "merged" | "open";
+const prQualifier = (kind: PrKind, from: string, to: string) =>
+  kind === "merged" ? `is:merged merged:${from}..${to}` : `is:open draft:false updated:${from}..${to}`;
+
+async function searchPrs(token: string, kind: PrKind, scope: string, from: string, to: string, out: PrNode[]): Promise<void> {
+  const q = `${scope} is:pr archived:false ${prQualifier(kind, from, to)}`;
   let after: string | null = null;
   let first = true;
   do {
@@ -121,8 +125,8 @@ async function searchMergedPrs(token: string, scope: string, from: string, to: s
         // Bisect the date range so every sub-query stays under the cap.
         const a = new Date(from), b = new Date(to);
         const mid = day(new Date(a.getTime() + Math.floor((b.getTime() - a.getTime()) / 2 / 86_400_000) * 86_400_000));
-        await searchMergedPrs(token, scope, from, mid, out);
-        await searchMergedPrs(token, scope, day(addDays(new Date(mid), 1)), to, out);
+        await searchPrs(token, kind, scope, from, mid, out);
+        await searchPrs(token, kind, scope, day(addDays(new Date(mid), 1)), to, out);
         return;
       }
     }
@@ -136,7 +140,7 @@ export async function fetchMergedPrs(cfg: Config, token: string, now = new Date(
   const from = day(addDays(now, -cfg.lookback_days));
   const to = day(now);
   const raw: PrNode[] = [];
-  for (const scope of scopes(cfg)) await searchMergedPrs(token, scope, from, to, raw);
+  for (const scope of scopes(cfg)) await searchPrs(token, "merged", scope, from, to, raw);
 
   const exclude = new Set(cfg.github.exclude_repos);
   const seen = new Set<string>();
@@ -149,6 +153,36 @@ export async function fetchMergedPrs(cfg: Config, token: string, now = new Date(
     const labels = pr.labels.nodes.map((l) => l.name);
     if (hasConfidential(labels, cfg)) continue;
     const sig = normalizePr(pr, cfg.github.linear_id_ignore_prefixes);
+    if (seen.has(sig.id)) continue;
+    seen.add(sig.id);
+    signals.push(sig);
+  }
+  return signals;
+}
+
+/**
+ * Open pull requests that signal upcoming work: approved ones (=> "In review") and ones carrying a configured
+ * label such as `feature-flag` or `release` (=> "In development"). Drafts and bot PRs never count.
+ */
+export async function fetchOpenPrs(cfg: Config, token: string, now = new Date()): Promise<Signal[]> {
+  const from = day(addDays(now, -cfg.lookback_days));
+  const to = day(now);
+  const raw: PrNode[] = [];
+  for (const scope of scopes(cfg)) await searchPrs(token, "open", scope, from, to, raw);
+
+  const exclude = new Set(cfg.github.exclude_repos);
+  const wanted = new Set(cfg.github.open_pr_labels.map((l) => l.toLowerCase()));
+  const seen = new Set<string>();
+  const signals: Signal[] = [];
+  for (const pr of raw) {
+    if (!pr.repository || pr.mergedAt || pr.isDraft) continue;
+    if (pr.repository.isArchived || exclude.has(pr.repository.name)) continue;
+    const labels = pr.labels.nodes.map((l) => l.name);
+    if (hasConfidential(labels, cfg)) continue;
+    const approved = pr.reviewDecision === "APPROVED" && pr.repository.defaultBranchRef?.name === pr.baseRefName;
+    const labelled = labels.some((l) => wanted.has(l.toLowerCase()));
+    if (!approved && !labelled) continue;
+    const sig = normalizeOpenPr(pr, approved, cfg.github.linear_id_ignore_prefixes);
     if (seen.has(sig.id)) continue;
     seen.add(sig.id);
     signals.push(sig);
@@ -226,6 +260,17 @@ export async function fetchGithubSignals(cfg: Config, token: string): Promise<{ 
   const prs = await fetchMergedPrs(cfg, token);
   sources.push({ name: "github-prs", ok: true });
 
+  // Open PRs are supplementary too: they only add the upcoming-work stages.
+  let open: Signal[] = [];
+  if (cfg.github.include_open_prs) {
+    try {
+      open = await fetchOpenPrs(cfg, token);
+      sources.push({ name: "github-open-prs", ok: true });
+    } catch (e) {
+      sources.push({ name: "github-open-prs", ok: false, error: errMsg(e) });
+    }
+  }
+
   // Releases are supplementary: a failure degrades the refresh to "partial".
   let releases: Signal[] = [];
   if (cfg.github.include_releases) {
@@ -236,5 +281,5 @@ export async function fetchGithubSignals(cfg: Config, token: string): Promise<{ 
       sources.push({ name: "github-releases", ok: false, error: errMsg(e) });
     }
   }
-  return { signals: [...prs, ...releases].sort((a, b) => b.date.localeCompare(a.date)), sources };
+  return { signals: [...prs, ...open, ...releases].sort((a, b) => b.date.localeCompare(a.date)), sources };
 }

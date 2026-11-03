@@ -4,11 +4,20 @@ export type Stage = "Shipped" | "Rolling out" | "In review" | "In development" |
 
 /** Stage comes from evidence in code. The LLM may only override via `resolveStage` rules. */
 export function deriveStage(signals: Signal[]): Stage {
-  const shipped = signals.some((s) => s.status === "Merged" || s.status === "Released");
+  const has = (...st: string[]) => signals.some((s) => st.includes(s.status));
+  const shipped = has("Merged", "Released", "Done", "Project completed");
+  const inReview = has("Approved", "In Review");
+  const inDev = has("Open", "In Progress");
+
+  // A started Linear project is unfinished work, even if some of its pull requests have merged.
+  if (has("Project started")) return shipped || has("Pre-release") ? "Rolling out" : inReview ? "In review" : "In development";
+  if (has("Project planned") && !shipped) return "Planned";
+
+  if (shipped && (inReview || inDev)) return "Rolling out"; // part has merged, more is still open
   if (shipped) return "Shipped";
-  if (signals.some((s) => s.status === "Pre-release")) return "Rolling out";
-  if (signals.some((s) => s.status === "Approved" || s.status === "In Review")) return "In review";
-  if (signals.some((s) => s.status === "Open" || s.status === "In Progress")) return "In development";
+  if (has("Pre-release")) return "Rolling out";
+  if (inReview) return "In review";
+  if (inDev) return "In development";
   return "Planned";
 }
 

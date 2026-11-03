@@ -1,12 +1,16 @@
 {
-  "generatedAt": "2026-11-03T00:39:31.784Z",
+  "generatedAt": "2026-11-03T20:09:57.739Z",
   "lookbackDays": 14,
   "refresh": {
     "status": "ok",
-    "lastAttemptAt": "2026-11-03T00:39:31.784Z",
+    "lastAttemptAt": "2026-11-03T20:09:57.739Z",
     "sources": [
       {
         "name": "github-prs",
+        "ok": true
+      },
+      {
+        "name": "github-open-prs",
         "ok": true
       },
       {
@@ -44,21 +48,348 @@
   },
   "digest": {
     "bullets": [
-      "Safe wallet keycards can now recover funds on many more blockchains, including EVM chains, Solana-style, XLM, Tezos, ICP, HBAR and ALGO. XLM and HBAR recovery also supports external signers.",
-      "Zama confidential tokens are live on mainnet: shield and unshield now work in production, ZAMA can be picked for staking on Ethereum wallets, and wrap and unwrap fixes shipped for multisig wallets.",
-      "New asset support: ZAR Universal on ARC and XRP, and Grass on Solana for Go Accounts. Zcash wallets are also prepared for the NU7 upgrade expected around 5 Nov 2026.",
-      "Stellar transaction explanations now show every account-settings change before signing and flag unmodeled operations. Stellar tokens with digits in their names, like USDM1, now work for withdrawals.",
-      "Staking and trading expand: Stacks staking supports configured PoX-5 contracts, and the Canton SDK supports Broadridge delegation, allocation requests and settlement authorization."
+      "Confidential tokens go live: six mainnet Zama token pairs can now be shielded and unshielded, ZAMA staking appears for Ethereum wallets, and wrap/unwrap fixes cover multisig wallets.",
+      "More asset support: goStocks tokenized equities (Apple, Amazon, Nvidia, Tesla tickers) in test and staging, ZAR Universal on ARC and XRP, and Grass on Solana for Go Accounts.",
+      "Safe wallet keycards can now recover funds on many more blockchains, including EVM chains, XLM, Tezos, ICP, HBAR and ALGO. XLM and HBAR recovery also works with external signers.",
+      "Stellar transaction explanations before signing now show every account-settings change, and flag operations the tool doesn't model. Stellar tokens with digits in their names, like USDM1, now work.",
+      "Developer fixes: Solana v1 transactions are now honored, Express returns errors instead of hanging on failed sends, and the SDK now supports Node.js 26."
     ],
     "countsByStage": {
-      "Shipped": 36,
+      "Shipped": 39,
       "Rolling out": 0,
-      "In review": 0,
+      "In review": 3,
       "In development": 0,
       "Planned": 0
     }
   },
   "features": [
+    {
+      "id": "wal-2232",
+      "groupKind": "ticket",
+      "isCustomerFacing": false,
+      "title": "Fix automated dependency maintenance pull requests",
+      "oneLiner": "Fixes an internal weekly maintenance job so validated dependency-exclusion updates are reliably published as pull requests.",
+      "whyItMatters": "Internal repository upkeep only. It makes routine maintenance more reliable but has no direct customer-visible effect.",
+      "audience": [
+        "Internal engineering"
+      ],
+      "productArea": "Platform & Infrastructure",
+      "stage": "Shipped",
+      "expectedDate": "2026-11-03",
+      "confidence": "medium",
+      "needsAttention": {
+        "pmm": false,
+        "design": false,
+        "docs": false
+      },
+      "owner": "zahin-mohammad",
+      "repos": [
+        "BitGoJS"
+      ],
+      "linearIds": [
+        "WAL-2232"
+      ],
+      "links": [
+        {
+          "label": "PR BitGoJS#10087",
+          "url": "https://github.com/BitGo/BitGoJS/pull/10087"
+        }
+      ],
+      "signals": [
+        {
+          "source": "github_pr",
+          "id": "BitGoJS#10087",
+          "title": "fix(root): publish validated iyarc-prune pull requests",
+          "url": "https://github.com/BitGo/BitGoJS/pull/10087",
+          "date": "2026-11-03T18:02:50Z",
+          "status": "Merged",
+          "labels": []
+        }
+      ]
+    },
+    {
+      "id": "cecho-2637",
+      "groupKind": "ticket",
+      "isCustomerFacing": true,
+      "title": "Updated Polygon mainnet network endpoint",
+      "oneLiner": "Updates the RPC URL used to connect to Polygon mainnet. Details beyond the endpoint change are not given.",
+      "whyItMatters": "Polygon connectivity may become more reliable, but the purpose isn't stated in the input. Customers likely won't see a direct change.",
+      "audience": [
+        "Wallet API developers",
+        "Operations"
+      ],
+      "productArea": "Asset Support",
+      "stage": "Shipped",
+      "expectedDate": "2026-11-03",
+      "confidence": "low",
+      "needsAttention": {
+        "pmm": false,
+        "design": false,
+        "docs": false
+      },
+      "owner": "parasgarg-bitgo",
+      "repos": [
+        "eth-multisig-v4"
+      ],
+      "linearIds": [
+        "CECHO-2637"
+      ],
+      "links": [
+        {
+          "label": "PR eth-multisig-v4#387",
+          "url": "https://github.com/BitGo/eth-multisig-v4/pull/387"
+        }
+      ],
+      "signals": [
+        {
+          "source": "github_pr",
+          "id": "eth-multisig-v4#387",
+          "title": "feat: updating the rpc url for polygon mainnet",
+          "url": "https://github.com/BitGo/eth-multisig-v4/pull/387",
+          "date": "2026-11-03T15:23:02Z",
+          "status": "Merged",
+          "labels": []
+        }
+      ]
+    },
+    {
+      "id": "si-2167",
+      "groupKind": "ticket",
+      "isCustomerFacing": true,
+      "title": "Fix early-exit unstaking on custodial PoX-5 wallets",
+      "oneLiner": "Makes the SDK pass unstaking settings through when sending from custodial paired wallets, so early-exit requests are no longer silently built as late exits.",
+      "whyItMatters": "Before the fix, an early-exit request dropped its settings and produced a late-exit transaction instead. This could cause unexpected unstaking behavior for developers using PoX-5 staking.",
+      "audience": [
+        "Wallet API developers",
+        "Institutional clients"
+      ],
+      "productArea": "Staking & DeFi",
+      "stage": "In review",
+      "confidence": "medium",
+      "needsAttention": {
+        "pmm": false,
+        "design": false,
+        "docs": false
+      },
+      "owner": "OttoAllmendinger",
+      "repos": [
+        "BitGoJS"
+      ],
+      "linearIds": [
+        "SI-2167",
+        "SI-2170"
+      ],
+      "links": [
+        {
+          "label": "PR BitGoJS#10103",
+          "url": "https://github.com/BitGo/BitGoJS/pull/10103"
+        }
+      ],
+      "signals": [
+        {
+          "source": "github_pr",
+          "id": "BitGoJS#10103",
+          "title": "fix(sdk-core): forward unstakingParams on custodial tx/initiate",
+          "url": "https://github.com/BitGo/BitGoJS/pull/10103",
+          "date": "2026-11-03T15:18:16Z",
+          "status": "Approved",
+          "labels": [
+            "pox5"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "chalo-1940",
+      "groupKind": "ticket",
+      "isCustomerFacing": true,
+      "title": "Solana v1 payment send code examples",
+      "oneLiner": "Adds two runnable examples showing how to send native SOL payments using Solana's v1 transaction format. One has BitGo build and broadcast, the other uses…",
+      "whyItMatters": "Helps developers see the difference between BitGo building and broadcasting a payment and the SDK building one. This should make integrating Solana v1 payments easier.",
+      "audience": [
+        "Wallet API developers"
+      ],
+      "productArea": "Developer Platform",
+      "stage": "In review",
+      "confidence": "high",
+      "needsAttention": {
+        "pmm": false,
+        "design": false,
+        "docs": true
+      },
+      "owner": "bhavidhingra",
+      "repos": [
+        "BitGoJS"
+      ],
+      "linearIds": [
+        "CHALO-1940"
+      ],
+      "links": [
+        {
+          "label": "PR BitGoJS#10120",
+          "url": "https://github.com/BitGo/BitGoJS/pull/10120"
+        }
+      ],
+      "signals": [
+        {
+          "source": "github_pr",
+          "id": "BitGoJS#10120",
+          "title": "feat(examples): add SOL v1 payment send examples",
+          "url": "https://github.com/BitGo/BitGoJS/pull/10120",
+          "date": "2026-11-03T13:57:26Z",
+          "status": "Approved",
+          "labels": []
+        }
+      ]
+    },
+    {
+      "id": "wci-2076",
+      "groupKind": "ticket",
+      "isCustomerFacing": true,
+      "title": "Fix optional fields in generated API spec",
+      "oneLiner": "Fixes the generated OpenAPI spec so optional fields, such as nonce and fee options, show their real types instead of empty definitions.",
+      "whyItMatters": "API documentation and generated client code become more accurate for developers. Previously many optional fields appeared with no type information.",
+      "audience": [
+        "Wallet API developers"
+      ],
+      "productArea": "Developer Platform",
+      "stage": "Shipped",
+      "expectedDate": "2026-11-03",
+      "confidence": "medium",
+      "needsAttention": {
+        "pmm": false,
+        "design": false,
+        "docs": true
+      },
+      "owner": "Charan-Ratlan",
+      "repos": [
+        "BitGoJS"
+      ],
+      "linearIds": [
+        "WCI-2076"
+      ],
+      "links": [
+        {
+          "label": "PR BitGoJS#10074",
+          "url": "https://github.com/BitGo/BitGoJS/pull/10074"
+        }
+      ],
+      "signals": [
+        {
+          "source": "github_pr",
+          "id": "BitGoJS#10074",
+          "title": "fix(express): render Optional codec as union in OpenAPI generation",
+          "url": "https://github.com/BitGo/BitGoJS/pull/10074",
+          "date": "2026-11-03T09:26:38Z",
+          "status": "Merged",
+          "labels": []
+        }
+      ]
+    },
+    {
+      "id": "scaas-11861",
+      "groupKind": "ticket",
+      "isCustomerFacing": true,
+      "title": "Add goStocks test and staging tokenized equities",
+      "oneLiner": "Adds nine goStocks tokenized equity tokens, plus their exchange-ledger (OFC) versions, for test and staging Solana environments, including Apple, Amazon, Nvidia and Tesla tickers.",
+      "whyItMatters": "Lets teams test and stage tokenized-equity support end to end before production. Staging tokens are marked as equities, not stablecoins.",
+      "audience": [
+        "Wallet API developers",
+        "Institutional clients",
+        "Product managers"
+      ],
+      "productArea": "Asset Support",
+      "stage": "Shipped",
+      "expectedDate": "2026-11-03",
+      "confidence": "medium",
+      "needsAttention": {
+        "pmm": false,
+        "design": false,
+        "docs": false
+      },
+      "owner": "asset-metadata-bot, zeeshanamjad-eng",
+      "repos": [
+        "BitGoJS"
+      ],
+      "linearIds": [
+        "SCAAS-11861",
+        "STONKS-767"
+      ],
+      "links": [
+        {
+          "label": "PR BitGoJS#10116",
+          "url": "https://github.com/BitGo/BitGoJS/pull/10116"
+        },
+        {
+          "label": "PR BitGoJS#10112",
+          "url": "https://github.com/BitGo/BitGoJS/pull/10112"
+        }
+      ],
+      "signals": [
+        {
+          "source": "github_pr",
+          "id": "BitGoJS#10116",
+          "title": "feat(statics): add 9 goStocks test tokens from AMS",
+          "url": "https://github.com/BitGo/BitGoJS/pull/10116",
+          "date": "2026-11-03T08:19:45Z",
+          "status": "Merged",
+          "labels": []
+        },
+        {
+          "source": "github_pr",
+          "id": "BitGoJS#10112",
+          "title": "feat(statics): add 9 goStocks staging tsol token definitions",
+          "url": "https://github.com/BitGo/BitGoJS/pull/10112",
+          "date": "2026-11-03T07:00:48Z",
+          "status": "Merged",
+          "labels": []
+        }
+      ]
+    },
+    {
+      "id": "chalo-2025",
+      "groupKind": "ticket",
+      "isCustomerFacing": false,
+      "title": "Add Solana devnet confidential-transfer test token",
+      "oneLiner": "Adds a test-only Solana devnet token so confidential transfers can be tested without waiting for the token issuer to approve new accounts.",
+      "whyItMatters": "Gives engineers a self-contained way to test confidential transfers. It is a test token on devnet and has no production impact.",
+      "audience": [
+        "Internal engineering"
+      ],
+      "productArea": "Asset Support",
+      "stage": "Shipped",
+      "expectedDate": "2026-11-03",
+      "confidence": "medium",
+      "needsAttention": {
+        "pmm": false,
+        "design": false,
+        "docs": false
+      },
+      "owner": "bhavidhingra",
+      "repos": [
+        "BitGoJS"
+      ],
+      "linearIds": [
+        "CHALO-2025"
+      ],
+      "links": [
+        {
+          "label": "PR BitGoJS#10115",
+          "url": "https://github.com/BitGo/BitGoJS/pull/10115"
+        }
+      ],
+      "signals": [
+        {
+          "source": "github_pr",
+          "id": "BitGoJS#10115",
+          "title": "feat(statics): add tsol:cttest devnet CT test mint (CHALO-2025)",
+          "url": "https://github.com/BitGo/BitGoJS/pull/10115",
+          "date": "2026-11-03T06:25:00Z",
+          "status": "Merged",
+          "labels": []
+        }
+      ]
+    },
     {
       "id": "cshld-2081",
       "groupKind": "ticket",
@@ -1177,6 +1508,50 @@
           "url": "https://github.com/BitGo/BitGoJS/pull/10086",
           "date": "2026-10-28T10:13:57Z",
           "status": "Merged",
+          "labels": []
+        }
+      ]
+    },
+    {
+      "id": "chalo-1993",
+      "groupKind": "ticket",
+      "isCustomerFacing": true,
+      "title": "Fix Canton receive-only allocation with zero amount",
+      "oneLiner": "Fixes an error when accepting a receive-only Canton allocation offer, where a zero amount was wrongly rejected. Setup calls now work in any order.",
+      "whyItMatters": "Accepting receive-only cross-issuer offers was failing with a server error. The fix lets these offers go through. It also gives clearer error messages to developers.",
+      "audience": [
+        "Wallet API developers",
+        "Institutional clients"
+      ],
+      "productArea": "Wallets & Custody",
+      "stage": "In review",
+      "confidence": "medium",
+      "needsAttention": {
+        "pmm": false,
+        "design": false,
+        "docs": false
+      },
+      "owner": "hrishikeshjain",
+      "repos": [
+        "BitGoJS"
+      ],
+      "linearIds": [
+        "CHALO-1993"
+      ],
+      "links": [
+        {
+          "label": "PR BitGoJS#10084",
+          "url": "https://github.com/BitGo/BitGoJS/pull/10084"
+        }
+      ],
+      "signals": [
+        {
+          "source": "github_pr",
+          "id": "BitGoJS#10084",
+          "title": "fix(sdk-coin-canton): receive-only allocate amount in any order",
+          "url": "https://github.com/BitGo/BitGoJS/pull/10084",
+          "date": "2026-10-28T08:10:11Z",
+          "status": "Approved",
           "labels": []
         }
       ]

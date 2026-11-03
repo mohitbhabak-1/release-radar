@@ -1,3 +1,4 @@
+import Link from "next/link";
 import { formatDate, type FeatureRecord } from "../../lib/releases";
 
 const STAGE_STYLE: Record<string, string> = {
@@ -44,6 +45,9 @@ export function Card({ f }: { f: FeatureRecord }) {
       </details>
 
       <div className="mt-3 flex flex-wrap items-center gap-x-3 gap-y-2 text-xs text-neutral-600 dark:text-neutral-400">
+        <Link href={`/feature/${f.id}`} className="font-medium text-indigo-700 underline underline-offset-2 dark:text-indigo-300">
+          Details<span className="sr-only"> for {f.title}</span>
+        </Link>
         {f.owner && <span>Owner: <span className="text-neutral-800 dark:text-neutral-200">{f.owner}</span></span>}
         {f.audience.length > 0 && (
           <ul className="flex flex-wrap gap-1" aria-label="Audience">

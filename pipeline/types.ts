@@ -10,6 +10,10 @@ export type Signal = {
   date: string; // ISO; most relevant date (target, merged, completed)
   linearIds: string[];
   labels: string[];
+  /** Linear project this belongs to (the project itself, or an issue inside it). */
+  projectId?: string;
+  /** Pull requests this signal points at, as "repo#123" (from Linear attachments). */
+  refs?: string[];
 };
 
 export type FeatureSummary = {

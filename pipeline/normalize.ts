@@ -45,10 +45,11 @@ export function cleanBody(raw: string | null | undefined): string {
 
 export type RawPr = {
   number: number;
+  updatedAt?: string;
   title: string;
   body: string | null;
   url: string;
-  mergedAt: string;
+  mergedAt: string | null;
   headRefName: string;
   author: { login: string } | null;
   labels: { nodes: { name: string }[] };
@@ -75,12 +76,16 @@ export function normalizePr(pr: RawPr, ignorePrefixes: string[] = []): Signal {
     team: pr.repository.name,
     owner: pr.author?.login,
     status: "Merged",
-    date: pr.mergedAt,
+    date: pr.mergedAt ?? "",
     linearIds: [
       ...new Set([...extractLinearIds([pr.title, pr.body], ignorePrefixes), ...extractLinearIdFromBranch(pr.headRefName, ignorePrefixes)]),
     ].sort(),
     labels: pr.labels.nodes.map((l) => l.name),
   };
+}
+
+export function normalizeOpenPr(pr: RawPr, approved: boolean, ignorePrefixes: string[] = []): Signal {
+  return { ...normalizePr(pr, ignorePrefixes), status: approved ? "Approved" : "Open", date: pr.updatedAt ?? "" };
 }
 
 export function normalizeRelease(repo: string, r: RawRelease, ignorePrefixes: string[] = []): Signal {

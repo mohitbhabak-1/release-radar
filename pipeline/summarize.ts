@@ -81,12 +81,21 @@ function words(s: string, max: number): string {
 // ---------- what the LLM sees ----------
 
 /** Redacted, minimal view of a feature. No code, diffs, or raw API payloads. */
+function signalType(s: Signal): string {
+  if (s.source === "github_release") return "release";
+  if (s.source === "linear_project") return "planning project";
+  if (s.source === "linear_issue") return "planning ticket";
+  if (s.status === "Approved") return "open pull request (approved, not yet merged)";
+  if (s.status === "Open") return "open pull request (not yet merged)";
+  return "merged pull request";
+}
+
 export function llmInput(g: FeatureGroup) {
   const signals = [...g.signals]
     .sort((a, b) => Number(/^feat/i.test(b.title)) - Number(/^feat/i.test(a.title)) || b.date.localeCompare(a.date))
     .slice(0, MAX_SIGNALS_PER_FEATURE)
     .map((s) => ({
-      type: s.source === "github_release" ? "release" : "merged pull request",
+      type: signalType(s),
       title: redact(s.title),
       description: redact(s.body).slice(0, MAX_BODY_FOR_LLM),
       labels: s.labels,
@@ -279,7 +288,7 @@ function toRecord(g: FeatureGroup, item: Item): FeatureRecord {
     productArea: item.productArea,
     stage,
     stageOverrideReason: overridden ? item.stageOverride?.reason : undefined,
-    expectedDate: g.latestDate.slice(0, 10) || undefined,
+    expectedDate: (stage === "Shipped" ? g.latestDate : g.targetDate)?.slice(0, 10) || undefined,
     confidence,
     needsAttention: item.needsAttention,
     owner: g.owners.slice(0, 3).join(", ") || undefined,

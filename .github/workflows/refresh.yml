@@ -53,6 +53,7 @@ jobs:
           # The built-in token can read public repos. Add a RADAR_GITHUB_TOKEN secret (read-only) to see private ones.
           GITHUB_TOKEN: ${{ secrets.RADAR_GITHUB_TOKEN || github.token }}
           OPENROUTER_API_KEY: ${{ secrets.OPENROUTER_API_KEY }}
+          LINEAR_API_KEY: ${{ secrets.LINEAR_API_KEY }}
 
       # Commit even when the refresh failed: a failed run updates data/releases.json so the page header shows it.
       - name: Commit data

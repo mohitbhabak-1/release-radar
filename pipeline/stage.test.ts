@@ -10,6 +10,8 @@ describe("deriveStage", () => {
     [["Released"], "Shipped"],
     [["Pre-release"], "Rolling out"],
     [["Pre-release", "Merged"], "Shipped"],
+    [["Merged", "Approved"], "Rolling out"],
+    [["Merged", "Open"], "Rolling out"],
     [["Approved"], "In review"],
     [["In Progress"], "In development"],
     [["Open"], "In development"],
