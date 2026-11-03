@@ -4,6 +4,7 @@ import { fetchGithubSignals } from "./github";
 import { conventionalScope, filterSignals } from "./filter";
 import { groupSignals, type FeatureGroup } from "./group";
 import { usage } from "./llm";
+import { computeStatus, errMsg, recordFailure, type SourceStatus } from "./status";
 import { buildDigest, saveCache, summarizeGroups } from "./summarize";
 import type { Signal } from "./types";
 
@@ -45,6 +46,7 @@ async function main() {
   }
 
   let signals: Signal[];
+  const sources: SourceStatus[] = [];
   if (FROM_CACHE && existsSync(".cache/signals.json")) {
     signals = JSON.parse(readFileSync(".cache/signals.json", "utf8"));
     console.log(`Using ${signals.length} cached signals (--from-cache)`);
@@ -53,7 +55,9 @@ async function main() {
       ? `${cfg.github.repos.length} listed repos`
       : `all non-archived repos in ${cfg.github.org}`;
     console.log(`Release Radar refresh: lookback ${cfg.lookback_days}d, GitHub scope = ${scope}`);
-    signals = await fetchGithubSignals(cfg, process.env.GITHUB_TOKEN!);
+    const gh = await fetchGithubSignals(cfg, process.env.GITHUB_TOKEN!);
+    signals = gh.signals;
+    sources.push(...gh.sources);
     // Local scratch output (gitignored). Contains truncated PR bodies, so keep it out of git.
     mkdirSync(".cache", { recursive: true });
     writeFileSync(".cache/signals.json", JSON.stringify(signals, null, 2));
@@ -72,7 +76,19 @@ async function main() {
   if (NO_LLM) return;
 
   const { records, stats, cache } = await summarizeGroups(cfg, groups, { maxLlm: MAX_LLM ? Number(MAX_LLM) : undefined });
-  const digest = await buildDigest(cfg, records, cache);
+  if (!records.length && groups.length) throw new Error(`No summaries were produced (${stats.errors[0] ?? "unknown LLM error"})`);
+  sources.push({ name: "llm-summaries", ok: !stats.failed && !stats.errors.length, error: stats.errors[0] });
+
+  let digest: Awaited<ReturnType<typeof buildDigest>>;
+  try {
+    digest = await buildDigest(cfg, records, cache);
+    sources.push({ name: "llm-digest", ok: true });
+  } catch (e) {
+    // Reuse the previous digest text rather than showing an empty block.
+    const prev = existsSync("data/releases.json") ? JSON.parse(readFileSync("data/releases.json", "utf8")).digest : undefined;
+    digest = prev ?? { bullets: [], countsByStage: {} };
+    sources.push({ name: "llm-digest", ok: false, error: errMsg(e) });
+  }
   saveCache(cache);
 
   writeFileSync(
@@ -81,7 +97,7 @@ async function main() {
       {
         generatedAt: new Date().toISOString(),
         lookbackDays: cfg.lookback_days,
-        refresh: { status: stats.skipped ? "partial" : "ok", sources: [{ name: "github", ok: true }] },
+        refresh: computeStatus(sources),
         areas: cfg.product_areas.map((a) => a.name),
         scanned: { org: cfg.github.org, repos: [...new Set(groups.flatMap((g) => g.repos))].sort() },
         digest,
@@ -96,11 +112,15 @@ async function main() {
       (stats.skipped ? `, ${stats.skipped} skipped (--max-llm)` : "") +
       ` | LLM calls: ${usage.calls}, tokens in/out: ${usage.promptTokens}/${usage.completionTokens}`,
   );
+  const status = computeStatus(sources);
+  if (status.status !== "ok") console.log(`::warning::Release Radar refresh is ${status.status}: ${status.message}`);
   console.log(`Customer-facing: ${records.filter((r) => r.isCustomerFacing).length}/${records.length}. Wrote data/releases.json`);
 }
 
 main().catch((err) => {
-  // Log message only: never dump request objects, which could carry auth headers.
-  console.error(err instanceof Error ? err.message : "Unknown error");
+  // Log the scrubbed message only: never dump request objects, which could carry auth headers.
+  const msg = errMsg(err);
+  console.error(`Refresh failed: ${msg}`);
+  if (!FROM_CACHE && !NO_LLM) recordFailure(msg); // keep last good data, but flag it red on the page
   process.exit(1);
 });

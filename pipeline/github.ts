@@ -1,5 +1,6 @@
 import type { Config } from "./config";
 import { normalizePr, normalizeRelease, type RawPr, type RawRelease } from "./normalize";
+import { errMsg, type SourceStatus } from "./status";
 import type { Signal } from "./types";
 
 const API = "https://api.github.com/graphql";
@@ -219,8 +220,21 @@ export async function fetchReleases(cfg: Config, token: string, now = new Date()
   return signals;
 }
 
-export async function fetchGithubSignals(cfg: Config, token: string): Promise<Signal[]> {
+export async function fetchGithubSignals(cfg: Config, token: string): Promise<{ signals: Signal[]; sources: SourceStatus[] }> {
+  const sources: SourceStatus[] = [];
+  // Merged PRs are essential: a failure here aborts the refresh (the caller records it).
   const prs = await fetchMergedPrs(cfg, token);
-  const releases = cfg.github.include_releases ? await fetchReleases(cfg, token) : [];
-  return [...prs, ...releases].sort((a, b) => b.date.localeCompare(a.date));
+  sources.push({ name: "github-prs", ok: true });
+
+  // Releases are supplementary: a failure degrades the refresh to "partial".
+  let releases: Signal[] = [];
+  if (cfg.github.include_releases) {
+    try {
+      releases = await fetchReleases(cfg, token);
+      sources.push({ name: "github-releases", ok: true });
+    } catch (e) {
+      sources.push({ name: "github-releases", ok: false, error: errMsg(e) });
+    }
+  }
+  return { signals: [...prs, ...releases].sort((a, b) => b.date.localeCompare(a.date)), sources };
 }

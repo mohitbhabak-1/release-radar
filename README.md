@@ -3,7 +3,7 @@
 One-page summary of upcoming and recently shipped features, built from GitHub (Linear later) and summarized with Claude.
 
 ## Status
-Phases 1, 3, 4, 5 done: GitHub ingestion, grouping, LLM summaries with caching. The page itself is a placeholder (Phase 6).
+Phases 1, 3-7 done: GitHub ingestion, grouping, LLM summaries with caching, the page, and a scheduled refresh. Linear (Phase 2) is parked.
 
 ## Setup
 1. Node 20+ (`node -v`).
@@ -18,6 +18,19 @@ Phases 1, 3, 4, 5 done: GitHub ingestion, grouping, LLM summaries with caching. 
 - `pipeline/` — ingestion, grouping, summarization (standalone script)
 - `data/releases.json` — pipeline output the page renders (later phases)
 - `app/` — Next.js page (Phase 6)
+
+## Scheduled refresh (GitHub Actions)
+`.github/workflows/refresh.yml` runs weekdays at 8am New York time (and on demand via "Run workflow"). It runs `npm run refresh`,
+commits `data/releases.json` and `data/cache.json`, and Vercel redeploys on that push.
+
+Repo secrets (Settings → Secrets and variables → Actions):
+- `OPENROUTER_API_KEY` (required)
+- `RADAR_GITHUB_TOKEN` (optional): without it the built-in token is used, which reads public repos only
+- `SLACK_WEBHOOK_URL` (optional): also posts failures to Slack
+
+On failure the job opens (or comments on) a "Release Radar refresh failed" issue, closes it when a later run succeeds, and the page
+header turns red while still showing the last good data. A partial failure (e.g. releases unavailable) shows amber. The page also warns
+if the data is more than 3 days old.
 
 ## Hosting (Vercel, prototype)
 The scheduled GitHub Action will commit `data/releases.json`; Vercel redeploys on push. Keep the repo private and

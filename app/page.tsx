@@ -1,5 +1,6 @@
 import { ISSUES_URL, STAGES, formatTimestamp, releases } from "../lib/releases";
 import { applyFilters, DEFAULT_FILTERS } from "../lib/filters";
+import { Freshness } from "./components/Freshness";
 import { Feed } from "./components/Feed";
 
 const STATUS = {
@@ -10,7 +11,7 @@ const STATUS = {
 
 export default function Home() {
   const { features, digest, refresh, scanned, generatedAt, lookbackDays } = releases;
-  const status = STATUS[refresh?.status ?? "failed"];
+  const status = STATUS[refresh?.status ?? (generatedAt ? "ok" : "failed")];
   const hasData = features.length > 0;
   // Counts match the default list (customer-facing, not low-confidence) so pills agree with what's shown.
   const counts = Object.fromEntries(STAGES.map((s) => [s, 0])) as Record<string, number>;
@@ -26,12 +27,22 @@ export default function Home() {
         <p className="mt-1 flex flex-wrap items-center gap-x-3 gap-y-1 text-sm text-neutral-600 dark:text-neutral-400">
           <span>Last {lookbackDays} days</span>
           <span>Refreshed {formatTimestamp(generatedAt)}</span>
+          {refresh?.lastAttemptAt && refresh.status !== "ok" && <span>Last attempt {formatTimestamp(refresh.lastAttemptAt)}</span>}
           <span className="inline-flex items-center gap-1.5">
             <span aria-hidden className={`size-2 rounded-full ${status.dot}`} />
             {status.label}
           </span>
         </p>
       </header>
+
+      {refresh && refresh.status !== "ok" && (
+        <div role="status" className={`mt-3 rounded-md border px-3 py-2 text-sm ${refresh.status === "failed" ? "border-red-400 bg-red-50 text-red-900 dark:border-red-800 dark:bg-red-950 dark:text-red-200" : "border-amber-400 bg-amber-50 text-amber-900 dark:border-amber-700 dark:bg-amber-950 dark:text-amber-200"}`}>
+          <strong>{refresh.status === "failed" ? "The latest refresh failed." : "The latest refresh was incomplete."}</strong>{" "}
+          {refresh.status === "failed" ? `Showing data from ${formatTimestamp(generatedAt)}. ` : "Some items may be missing. "}
+          {refresh.message && <span className="opacity-90">Details: {refresh.message}</span>}
+        </div>
+      )}
+      <Freshness generatedAt={generatedAt} />
 
       {!hasData ? (
         <p className="py-24 text-center text-neutral-600 dark:text-neutral-400">No release data yet. The pipeline hasn't produced a summary.</p>

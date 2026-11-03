@@ -5,6 +5,7 @@ import type { Config } from "./config";
 import type { FeatureGroup } from "./group";
 import { callTool } from "./llm";
 import { redact } from "./redact";
+import { errMsg } from "./status";
 import { deriveStage, resolveStage, type Stage } from "./stage";
 import type { Signal } from "./types";
 
@@ -118,7 +119,14 @@ Rules:
 
 // ---------- summarization with cache ----------
 
-export type SummarizeStats = { features: number; cacheHits: number; llmFeatures: number; skipped: number };
+export type SummarizeStats = {
+  features: number;
+  cacheHits: number;
+  llmFeatures: number;
+  skipped: number; // left out because of --max-llm
+  failed: number; // left out because an LLM call failed
+  errors: string[];
+};
 
 export async function summarizeGroups(
   cfg: Config,
@@ -146,12 +154,14 @@ export async function summarizeGroups(
   const batches: typeof todo[] = [];
   for (let i = 0; i < limited.length; i += cfg.llm.batch_size) batches.push(limited.slice(i, i + cfg.llm.batch_size));
 
+  const errors: string[] = [];
   let next = 0;
   await Promise.all(
     Array.from({ length: Math.min(cfg.llm.concurrency, batches.length) }, async () => {
       while (next < batches.length) {
         const batch = batches[next++];
         let pending = batch;
+        try {
         for (let round = 0; round < 3 && pending.length; round++) {
           const out = await callTool(cfg, {
             system: SYSTEM(cfg.product_areas),
@@ -171,11 +181,18 @@ export async function summarizeGroups(
           }
           pending = pending.filter((p) => !byId.has(p.g.id)); // retry anything the model skipped
         }
+        } catch (e) {
+          errors.push(errMsg(e)); // this batch is lost, the rest of the run continues
+        }
       }
     }),
   );
 
-  await assignDomains(cfg, groups, items);
+  try {
+    await assignDomains(cfg, groups, items);
+  } catch (e) {
+    errors.push(`domain assignment: ${errMsg(e)}`);
+  }
 
   // Drop cache entries nothing used this run so the file doesn't grow forever.
   cache.summaries = Object.fromEntries(Object.entries(cache.summaries).filter(([h]) => used.has(h)));
@@ -184,7 +201,14 @@ export async function summarizeGroups(
   return {
     records,
     cache,
-    stats: { features: groups.length, cacheHits, llmFeatures: limited.length, skipped: groups.length - records.length },
+    stats: {
+      features: groups.length,
+      cacheHits,
+      llmFeatures: limited.length,
+      skipped: todo.length - limited.length,
+      failed: limited.filter((p) => !items.has(p.g.id)).length,
+      errors: [...new Set(errors)],
+    },
   };
 }
 

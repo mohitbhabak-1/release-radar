@@ -1,0 +1,106 @@
+name: Refresh Release Radar
+
+on:
+  schedule:
+    # 12:00 and 13:00 UTC on weekdays. Exactly one of them is 8am New York time (EDT/EST); the gate step skips the other.
+    - cron: "0 12 * * 1-5"
+    - cron: "0 13 * * 1-5"
+  workflow_dispatch: {}
+
+permissions:
+  contents: write # commit the refreshed data files
+  issues: write # open / close the failure issue
+
+concurrency:
+  group: refresh-release-radar
+  cancel-in-progress: false
+
+jobs:
+  refresh:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - name: Gate on 8am Eastern
+        id: gate
+        run: |
+          hour=$(TZ=America/New_York date +%H)
+          if [ "${{ github.event_name }}" = "workflow_dispatch" ] || [ "$hour" = "08" ]; then
+            echo "run=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "Not 8am in New York (hour=$hour); skipping this duplicate schedule."
+            echo "run=false" >> "$GITHUB_OUTPUT"
+          fi
+
+      - uses: actions/checkout@v4
+        if: steps.gate.outputs.run == 'true'
+
+      - uses: actions/setup-node@v4
+        if: steps.gate.outputs.run == 'true'
+        with:
+          node-version: 24
+          cache: npm
+
+      - name: Install
+        if: steps.gate.outputs.run == 'true'
+        run: npm ci
+
+      - name: Refresh
+        id: refresh
+        if: steps.gate.outputs.run == 'true'
+        continue-on-error: true
+        run: npm run refresh
+        env:
+          # The built-in token can read public repos. Add a RADAR_GITHUB_TOKEN secret (read-only) to see private ones.
+          GITHUB_TOKEN: ${{ secrets.RADAR_GITHUB_TOKEN || github.token }}
+          OPENROUTER_API_KEY: ${{ secrets.OPENROUTER_API_KEY }}
+
+      # Commit even when the refresh failed: a failed run updates data/releases.json so the page header shows it.
+      - name: Commit data
+        if: steps.gate.outputs.run == 'true'
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add data/releases.json data/cache.json
+          if git diff --cached --quiet; then
+            echo "No data changes."
+          else
+            git commit -m "chore(data): refresh Release Radar"
+            git pull --rebase -q
+            git push
+          fi
+
+      - name: Notify on failure
+        if: steps.gate.outputs.run == 'true' && steps.refresh.outcome == 'failure'
+        env:
+          GH_TOKEN: ${{ github.token }}
+          SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
+        run: |
+          run_url="$GITHUB_SERVER_URL/$GITHUB_REPOSITORY/actions/runs/$GITHUB_RUN_ID"
+          detail=$(node -p "try{require('./data/releases.json').refresh.message||''}catch(e){''}")
+          title="Release Radar refresh failed"
+          body="The scheduled refresh failed. The page is showing the last good data.\n\nRun: $run_url\n\nDetail: $detail"
+          existing=$(gh issue list --state open --search "in:title \"$title\"" --json number --jq '.[0].number // empty')
+          if [ -n "$existing" ]; then
+            gh issue comment "$existing" --body "$(printf "$body")"
+          else
+            gh issue create --title "$title" --body "$(printf "$body")"
+          fi
+          if [ -n "$SLACK_WEBHOOK_URL" ]; then
+            curl -sS -X POST -H 'Content-type: application/json' \
+              --data "$(node -e 'console.log(JSON.stringify({text:"Release Radar refresh failed: "+process.argv[1]}))' "$run_url")" \
+              "$SLACK_WEBHOOK_URL" > /dev/null
+          fi
+
+      - name: Close failure issue on success
+        if: steps.gate.outputs.run == 'true' && steps.refresh.outcome == 'success'
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          existing=$(gh issue list --state open --search 'in:title "Release Radar refresh failed"' --json number --jq '.[0].number // empty')
+          if [ -n "$existing" ]; then
+            gh issue close "$existing" --comment "Refresh succeeded again: $GITHUB_SERVER_URL/$GITHUB_REPOSITORY/actions/runs/$GITHUB_RUN_ID"
+          fi
+
+      - name: Fail the job if the refresh failed
+        if: steps.gate.outputs.run == 'true' && steps.refresh.outcome == 'failure'
+        run: exit 1

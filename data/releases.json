@@ -1,11 +1,16 @@
 {
-  "generatedAt": "2026-11-03T00:04:07.499Z",
+  "generatedAt": "2026-11-03T00:34:33.114Z",
   "lookbackDays": 14,
   "refresh": {
     "status": "ok",
+    "lastAttemptAt": "2026-11-03T00:34:33.114Z",
     "sources": [
       {
-        "name": "github",
+        "name": "llm-summaries",
+        "ok": true
+      },
+      {
+        "name": "llm-digest",
         "ok": true
       }
     ]

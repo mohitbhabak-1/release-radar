@@ -6,7 +6,12 @@ export type { FeatureRecord };
 export type ReleasesFile = {
   generatedAt: string | null;
   lookbackDays: number;
-  refresh?: { status: "ok" | "partial" | "failed"; sources: { name: string; ok: boolean }[] };
+  refresh?: {
+    status: "ok" | "partial" | "failed";
+    lastAttemptAt?: string;
+    sources: { name: string; ok: boolean; error?: string }[];
+    message?: string;
+  };
   areas?: string[]; // configured product domains, in display order
   scanned?: { org: string; repos: string[] };
   digest?: { bullets: string[]; countsByStage: Record<string, number> };
