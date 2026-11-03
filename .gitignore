@@ -9,3 +9,4 @@ node_modules
 data/features.raw.json
 next-env.d.ts
 *.tsbuildinfo
+.claude/
