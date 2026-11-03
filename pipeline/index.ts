@@ -76,6 +76,11 @@ async function main() {
   if (NO_LLM) return;
 
   const { records, stats, cache } = await summarizeGroups(cfg, groups, { maxLlm: MAX_LLM ? Number(MAX_LLM) : undefined });
+  // Guard against a silently degraded source (e.g. a token that can only see some repos) wiping good data.
+  const prevCount = existsSync("data/releases.json") ? (JSON.parse(readFileSync("data/releases.json", "utf8")).features?.length ?? 0) : 0;
+  if (!process.env.ALLOW_SHRINK && prevCount >= 10 && records.length < prevCount * 0.3) {
+    throw new Error(`Refresh produced only ${records.length} features vs ${prevCount} before (only ${signals.length} signals fetched). Keeping the previous data. Set ALLOW_SHRINK=1 to accept a genuinely quiet period.`);
+  }
   if (!records.length && groups.length) throw new Error(`No summaries were produced (${stats.errors[0] ?? "unknown LLM error"})`);
   sources.push({ name: "llm-summaries", ok: !stats.failed && !stats.errors.length, error: stats.errors[0] });
 

@@ -1,6 +1,959 @@
 {
  "version": 1,
- "summaries": {},
+ "summaries": {
+  "16681b29451d7b7fc319233c725941211b02a03c5a2f313bcf743c9e1e5a51a1": {
+   "id": "defi-1257",
+   "isCustomerFacing": true,
+   "title": "Fix crash approving message-signing requests",
+   "oneLiner": "Approving a message-signing request no longer crashes the SDK; the message is now left to be signed separately as intended.",
+   "whyItMatters": "Developers who approve message-sign or typed-data-sign requests through the SDK hit an error before this fix. Approvals for these requests now complete reliably, so message-signing workflows can proceed.",
+   "audience": [
+    "Wallet API developers",
+    "SDK developers"
+   ],
+   "productArea": "Developer Platform",
+   "confidence": "medium",
+   "needsAttention": {
+    "pmm": false,
+    "design": false,
+    "docs": false
+   }
+  },
+  "eadd38bdd98c16a07eb5babfbd1027116df3ab7c1e637c565879c2b9fd9e0aa2": {
+   "id": "cshld-2081",
+   "isCustomerFacing": true,
+   "title": "New tokens: ZAR Universal on ARC and XRP",
+   "oneLiner": "Adds support for ZAR Universal on ARC and XRP, plus the Teuroc test token on Sepolia, with matching trading-account equivalents.",
+   "whyItMatters": "Client-requested tokens can now be recognized by wallets, pricing and the UI. Clients can hold and use ZAR Universal on two more networks.",
+   "audience": [
+    "Institutional clients",
+    "Wallet API developers"
+   ],
+   "productArea": "Asset Support",
+   "confidence": "medium",
+   "needsAttention": {
+    "pmm": false,
+    "design": false,
+    "docs": true
+   }
+  },
+  "3a58632da9b0dd92c6dfd89ade0fb40a05a76613a6b23b11f5940e127f53c27a": {
+   "id": "rollup-safe-wallet-recovery",
+   "isCustomerFacing": true,
+   "title": "Safe wallet recovery across many coins",
+   "oneLiner": "Safe wallet keycards can now be used to recover funds on EVM chains, STX, AVAXC, Cosmos, SOL, ADA, XLM, XTZ, ICP, HBAR and ALGO.",
+   "whyItMatters": "Customers with Safe wallets can recover funds from a keycard on many more blockchains. Offline recovery doesn't auto-broadcast, and recovery fails safely when keys don't match.",
+   "audience": [
+    "Institutional clients",
+    "Wallet API developers",
+    "Operations"
+   ],
+   "productArea": "Wallets & Custody",
+   "confidence": "high",
+   "needsAttention": {
+    "pmm": true,
+    "design": false,
+    "docs": true
+   }
+  },
+  "45ec1fc323af0cca5d323100b0b695f6d3efc023409287ca7f247c466a7bf5e2": {
+   "id": "bitgojs-9995",
+   "isCustomerFacing": true,
+   "title": "Automated token onboarding batch updates",
+   "oneLiner": "Several batches of new tokens were added through the automated asset-metadata onboarding process. The input doesn't name the specific tokens.",
+   "whyItMatters": "Newly onboarded tokens become recognized across BitGo wallets and trading accounts. The exact token list isn't stated, so check the individual changes for details.",
+   "audience": [
+    "Institutional clients",
+    "Wallet API developers"
+   ],
+   "productArea": "Asset Support",
+   "confidence": "low",
+   "needsAttention": {
+    "pmm": false,
+    "design": false,
+    "docs": false
+   }
+  },
+  "76b196c46c9035efe32239a6a6f8df79ef307337a20ac7f39b45197d536144a9": {
+   "id": "cshld-2079",
+   "isCustomerFacing": true,
+   "title": "Fuller XLM transaction explanations before signing",
+   "oneLiner": "Stellar transaction explanations now show every account-settings change, such as signers, thresholds and home domain. They also flag operations the tool doesn't model.",
+   "whyItMatters": "Reviewers, for example in the offline vault console, can see everything a transaction does before signing. This lowers the risk of approving hidden changes.",
+   "audience": [
+    "Institutional clients",
+    "Wallet API developers",
+    "Operations"
+   ],
+   "productArea": "Security & Key Management",
+   "confidence": "high",
+   "needsAttention": {
+    "pmm": false,
+    "design": false,
+    "docs": true
+   }
+  },
+  "0eecffce519513293e3844ceeba2886c4ca5f2f85bd1121e3ff1021d25a18e08": {
+   "id": "cshld-2113",
+   "isCustomerFacing": true,
+   "title": "Zcash shielded transactions accept randomizer-only input",
+   "oneLiner": "Zcash shielded partially-signed transactions can now be built with a randomizer that supplies only the 'rk' value. The input gives no further detail.",
+   "whyItMatters": "This likely widens Zcash shielded transaction support. The purpose is not described in the input, so treat this reading as tentative.",
+   "audience": [
+    "Wallet API developers"
+   ],
+   "productArea": "Asset Support",
+   "confidence": "low",
+   "needsAttention": {
+    "pmm": false,
+    "design": false,
+    "docs": false
+   }
+  },
+  "32b38e566425a6626eb16957ee9d089435701798aef179b999e8dee174356aef": {
+   "id": "cecho-2580",
+   "isCustomerFacing": true,
+   "title": "Fix token setup for non-Ethereum EVM chains",
+   "oneLiner": "Corrects how about 95 tokens on OKB X Layer, Base, and Flow are configured, so they use the right token type.",
+   "whyItMatters": "Tokens set up with the wrong type could behave incorrectly or break the SDK when stricter checks are added. This keeps token support on these chains reliable for customers and their developers.",
+   "audience": [
+    "Wallet API developers",
+    "Institutional clients"
+   ],
+   "productArea": "Asset Support",
+   "confidence": "medium",
+   "needsAttention": {
+    "pmm": false,
+    "design": false,
+    "docs": false
+   }
+  },
+  "4d2f485168893235a3ceca717349f89dc7f420247489154f287735f66461a8fb": {
+   "id": "coin-7264",
+   "isCustomerFacing": true,
+   "title": "Fix Stellar token withdrawals with digits in name",
+   "oneLiner": "Stellar tokens whose asset codes contain numbers, such as USDM1, are now accepted, so unsigned withdrawal transactions can be explained and processed in OVC.",
+   "whyItMatters": "A client could not withdraw xlm:USDM1 from its Go account because the transaction failed validation in OVC. This unblocks withdrawals for Stellar tokens with alphanumeric codes.",
+   "audience": [
+    "Go account clients",
+    "Institutional clients",
+    "Wallet API developers"
+   ],
+   "productArea": "Asset Support",
+   "confidence": "high",
+   "needsAttention": {
+    "pmm": false,
+    "design": false,
+    "docs": false
+   }
+  },
+  "80ae716a388cc4c6bafbb5d0891660e30580779d22b014c76ecd5055a2d4537c": {
+   "id": "wcn-3799",
+   "isCustomerFacing": true,
+   "title": "Node.js 22 support deprecated in SDK",
+   "oneLiner": "The SDK documentation now says Node.js 22 is deprecated ahead of its April 2027 end-of-life. Nothing is removed yet.",
+   "whyItMatters": "Customer developers running the SDK on Node.js 22 get advance notice to plan an upgrade. Removal is tracked as a later follow-up.",
+   "audience": [
+    "SDK developers",
+    "Wallet API developers"
+   ],
+   "productArea": "Platform & Infrastructure",
+   "confidence": "high",
+   "needsAttention": {
+    "pmm": false,
+    "design": false,
+    "docs": true
+   }
+  },
+  "b262172c6f5f44b65ec54bae6fbc7cbaa94565f641735a01cb9e98821825bf90": {
+   "id": "rollup-zcash-ironwood-support",
+   "isCustomerFacing": true,
+   "title": "Zcash Ironwood spend support",
+   "oneLiner": "Adds building, inspecting and verifying Zcash Ironwood spend transactions, including keyless construction, TypeScript access and refreshed anchor and witness data on spends.",
+   "whyItMatters": "This lays the groundwork for spending Zcash Ironwood funds through BitGo's SDK tooling. The input gives little customer-level detail, so scope and availability need confirming.",
+   "audience": [
+    "Wallet API developers",
+    "Institutional clients"
+   ],
+   "productArea": "Asset Support",
+   "confidence": "low",
+   "needsAttention": {
+    "pmm": true,
+    "design": false,
+    "docs": true
+   }
+  },
+  "9907f7752bf49266de29ddfbbfd5f1264302b589b0b982fe4bc4c44557368d1b": {
+   "id": "chalo-2010",
+   "isCustomerFacing": true,
+   "title": "Fix ERC-7984 wrap approval rebuild verification",
+   "oneLiner": "Fixes a failure where the server-side approval of a confidential-token wrap (ERC-7984) on onchain multisig wallets was rejected during verification.",
+   "whyItMatters": "Pending approvals for wrapping confidential tokens could not be completed on onchain multisig wallets. The fix lets those approvals verify and go through.",
+   "audience": [
+    "Institutional clients",
+    "Wallet API developers"
+   ],
+   "productArea": "Wallets & Custody",
+   "confidence": "medium",
+   "needsAttention": {
+    "pmm": false,
+    "design": false,
+    "docs": false
+   }
+  },
+  "bacde1ad294718516809b3519f92b44e71b703c3d659f8476066945360b94d81": {
+   "id": "chalo-1019",
+   "isCustomerFacing": true,
+   "title": "Mainnet Zama confidential token shield/unshield enabled",
+   "oneLiner": "Registers the on-chain details for six mainnet Zama confidential token pairs (ERC-7984) so wrap, approve and unwrap (shield/unshield) can work on production.",
+   "whyItMatters": "Until now, shield and unshield requests on mainnet failed because the token pairs weren't registered. This is the SDK prerequisite for supporting Zama confidential tokens in production.",
+   "audience": [
+    "Institutional clients",
+    "Wallet API developers"
+   ],
+   "productArea": "Asset Support",
+   "confidence": "medium",
+   "needsAttention": {
+    "pmm": true,
+    "design": false,
+    "docs": true
+   }
+  },
+  "b49650c7c82c4263d15f1bdf11fb774cd9c19e1fb0c94ecf57bf5212abc74fdb": {
+   "id": "cshld-2083",
+   "isCustomerFacing": true,
+   "title": "Zcash transaction checks for encrypted data and change",
+   "oneLiner": "Adds verification of the encrypted cipher data and change output on Zcash transactions. Details are limited in the source.",
+   "whyItMatters": "Stronger checks on Zcash transactions help confirm funds go where intended, including change returning to the wallet. Exact scope is unclear from the input.",
+   "audience": [
+    "Wallet API developers",
+    "Institutional clients"
+   ],
+   "productArea": "Security & Key Management",
+   "confidence": "low",
+   "needsAttention": {
+    "pmm": false,
+    "design": false,
+    "docs": false
+   }
+  },
+  "f2aad30bef39a96511c855bf0dca407b3cddbfd0b731bed480d988283367998b": {
+   "id": "cecho-2550",
+   "isCustomerFacing": true,
+   "title": "Fix Go Account naming for Solana OpenUSD",
+   "oneLiner": "Corrects the Go Account naming used for the OpenUSD token on Solana.",
+   "whyItMatters": "Accurate account naming keeps OpenUSD on Solana displaying and behaving consistently for Go Account users. Details are limited in the source.",
+   "audience": [
+    "Institutional clients",
+    "Wallet API developers"
+   ],
+   "productArea": "Go Accounts & Trading",
+   "confidence": "low",
+   "needsAttention": {
+    "pmm": false,
+    "design": false,
+    "docs": false
+   }
+  },
+  "ef6099a40c5a74a1b13a8910ef00679f5a01a015aa3ce0bf2873236bee3ce0c9": {
+   "id": "chalo-1957",
+   "isCustomerFacing": true,
+   "title": "Fix ERC-7984 wrap/unwrap on custodial multisig wallets",
+   "oneLiner": "Fixes wrap, unwrap and finalize-unwrap for ERC-7984 tokens on Ethereum-family multisig wallets, including approving them as pending approvals and building them through the API.",
+   "whyItMatters": "These operations previously failed with missing-parameter or schema errors. Customers using ERC-7984 confidential tokens can now complete wrap and unwrap flows, including approval of pending requests.",
+   "audience": [
+    "Wallet API developers",
+    "Institutional clients"
+   ],
+   "productArea": "Staking & DeFi",
+   "confidence": "medium",
+   "needsAttention": {
+    "pmm": false,
+    "design": false,
+    "docs": true
+   }
+  },
+  "da70014b9936cc57cd2d22b118f724629d5f3aab0ecb0a447b9a31824f11d7bb": {
+   "id": "wcn-1565",
+   "isCustomerFacing": true,
+   "title": "Pass attestation through withdrawals and MPC signing",
+   "oneLiner": "The SDK and Express now accept an optional attestation on withdrawal and threshold-signing requests and pass it along to BitGo. They do not verify it.",
+   "whyItMatters": "Developers can attach attestation data to withdrawals and signing requests. This is groundwork for services that need it. The purpose of the attestation is not stated in the source.",
+   "audience": [
+    "Wallet API developers"
+   ],
+   "productArea": "Developer Platform",
+   "confidence": "medium",
+   "needsAttention": {
+    "pmm": false,
+    "design": false,
+    "docs": true
+   }
+  },
+  "b9c74d38febf70ef4ece39196e9794a08cd8f21cfbda2e9d70dc7db0002d8109": {
+   "id": "cshld-2073",
+   "isCustomerFacing": true,
+   "title": "Zcash v6 transaction size calculation support",
+   "oneLiner": "Zcash v6 (Ironwood) unsigned transactions can now be extracted correctly, so their size can be calculated instead of failing.",
+   "whyItMatters": "This enables a more accurate fee check on pending approvals for Zcash v6 transactions. It replaces an approximate size measure and may later support integrity checks.",
+   "audience": [
+    "Wallet API developers",
+    "Institutional clients"
+   ],
+   "productArea": "Asset Support",
+   "confidence": "medium",
+   "needsAttention": {
+    "pmm": false,
+    "design": false,
+    "docs": false
+   }
+  },
+  "442b7b89ba3a48f92c7bc2b1e553ee567e5692a6884e334859faea58228f481c": {
+   "id": "cecho-2590",
+   "isCustomerFacing": true,
+   "title": "Support for Node.js 26 in SDK",
+   "oneLiner": "The BitGo SDK now works on Node.js 26, including a fix for Cardano message signing that broke on that version.",
+   "whyItMatters": "Customers' developers can run the SDK on the newest Node.js version. Without the Cardano fix, message encoding on Node.js 26 would have been silently cut short and failed to decode.",
+   "audience": [
+    "Wallet API developers",
+    "SDK users"
+   ],
+   "productArea": "Platform & Infrastructure",
+   "confidence": "medium",
+   "needsAttention": {
+    "pmm": false,
+    "design": false,
+    "docs": true
+   }
+  },
+  "c69fb40a720c667e0c1003bd739e1eaeb10b0ea62dbb6045502ca524d92f0013": {
+   "id": "cshld-2095",
+   "isCustomerFacing": true,
+   "title": "Shielded Zcash transactions for MPC wallets",
+   "oneLiner": "Adds keyless building and parsing of shielded Zcash transactions for MPC Zcash wallets. The PR gives no further detail.",
+   "whyItMatters": "This likely extends shielded Zcash support to MPC wallets. The source is a title only, so the exact customer impact is unclear.",
+   "audience": [
+    "Wallet API developers",
+    "Institutional clients"
+   ],
+   "productArea": "Asset Support",
+   "confidence": "low",
+   "needsAttention": {
+    "pmm": false,
+    "design": false,
+    "docs": true
+   }
+  },
+  "77b29063455ada0f5e9379bc4e489ab8764dc4f0e762ef464225e8b9ee512bee": {
+   "id": "cshld-2094",
+   "isCustomerFacing": true,
+   "title": "Unified addresses on Zcash transparent outputs",
+   "oneLiner": "Zcash version 6 partially signed transactions now accept unified addresses on their transparent outputs.",
+   "whyItMatters": "This likely lets customers send to Zcash unified addresses in more transaction types. The source is a title only, so confidence is low.",
+   "audience": [
+    "Wallet API developers"
+   ],
+   "productArea": "Asset Support",
+   "confidence": "low",
+   "needsAttention": {
+    "pmm": false,
+    "design": false,
+    "docs": true
+   }
+  },
+  "f94685f739bad995d43b5b5ce5aa2f8bcc2ecb410d651a4b36657aa2c803fb99": {
+   "id": "cshld-2087",
+   "isCustomerFacing": false,
+   "title": "Read spent inputs from Zcash v6 transactions",
+   "oneLiner": "Adds a lower-level function to list the previous outputs a transaction spends. Version 6 Zcash transactions now behave like version 4 when pending approvals are created.",
+   "whyItMatters": "Pending-approval creation for version 6 Zcash transactions works consistently with older versions. This is mostly internal plumbing, and customers would only notice it as reliability.",
+   "audience": [
+    "Internal engineering"
+   ],
+   "productArea": "Asset Support",
+   "confidence": "medium",
+   "needsAttention": {
+    "pmm": false,
+    "design": false,
+    "docs": false
+   }
+  },
+  "8010477343f724619bb1c2e3b137ce28e26db1810773340082fdb66d231895e4": {
+   "id": "si-1971",
+   "isCustomerFacing": true,
+   "title": "Safer PoX-5 early exits for custodial wallets",
+   "oneLiner": "Offline vault and descriptor wallets now check spend rules and can explain and half-sign PoX-5 early exits before signing.",
+   "whyItMatters": "Customers can exit PoX-5 lockups early using the Offline Vault Console. Added checks before signing help prevent invalid or unsafe spends, for both early and late exits.",
+   "audience": [
+    "Institutional clients",
+    "Custody operations",
+    "Wallet API developers"
+   ],
+   "productArea": "Staking & DeFi",
+   "confidence": "medium",
+   "needsAttention": {
+    "pmm": false,
+    "design": false,
+    "docs": true
+   }
+  },
+  "d9a409545239faa3465b6aec4fae94d19952586448546654251ce79aac31af9c": {
+   "id": "si-2153",
+   "isCustomerFacing": true,
+   "title": "ZAMA staking available for Ethereum wallets",
+   "oneLiner": "ZAMA now appears in the Stake asset picker for Ethereum wallets in production, so customers can select it for staking.",
+   "whyItMatters": "Mainnet ZAMA was filtered out of the Stake picker even though backend staking support existed. Customers with the staking flag enabled can now start ZAMA staking from the UI.",
+   "audience": [
+    "Institutional clients",
+    "Staking users"
+   ],
+   "productArea": "Staking & DeFi",
+   "confidence": "high",
+   "needsAttention": {
+    "pmm": true,
+    "design": false,
+    "docs": false
+   }
+  },
+  "ebf33058c287e468a6adbe60889e0f5b7e32172b18fc60207068969fd60d5660": {
+   "id": "chalo-1969",
+   "isCustomerFacing": true,
+   "title": "Canton custodial timing data kept in transactions",
+   "oneLiner": "The SDK now preserves custodial ledger-time metadata when serializing Canton transactions for broadcast.",
+   "whyItMatters": "Keeping timing metadata intact helps Canton custodial transactions broadcast correctly. The input gives limited detail, so the exact customer impact is unclear.",
+   "audience": [
+    "Wallet API developers",
+    "Custody clients"
+   ],
+   "productArea": "Asset Support",
+   "confidence": "low",
+   "needsAttention": {
+    "pmm": false,
+    "design": false,
+    "docs": false
+   }
+  },
+  "99c0c1b447a2d22b2be6273ae65309e838ccb42cd56a7c2d6e8022780c4dbc08": {
+   "id": "cus-2174",
+   "isCustomerFacing": true,
+   "title": "Fix wallet share acceptance failure for some users",
+   "oneLiner": "Bulk accepting wallet shares no longer looks up the sharing key when it isn't needed, fixing an error for users without one.",
+   "whyItMatters": "Users with no sharing key on file, such as those accepting Go Account or OFC rotation shares, hit a confusing 'encryptedXprv not found' error. They can now accept these shares.",
+   "audience": [
+    "Wallet API developers",
+    "Institutional clients",
+    "Support"
+   ],
+   "productArea": "Wallets & Custody",
+   "confidence": "high",
+   "needsAttention": {
+    "pmm": false,
+    "design": false,
+    "docs": false
+   }
+  },
+  "197c530daf35359e5840436339207e50a5194bef1033c54fb1336462e88685cb": {
+   "id": "si-2026",
+   "isCustomerFacing": true,
+   "title": "Stacks staking supports configured PoX-5 contracts",
+   "oneLiner": "The Stacks SDK can now build and accept transactions for a configured PoX-5 staking contract, including the test and dummy contracts, with safeguards.",
+   "whyItMatters": "Registering for Stacks PoX-5 bonding was blocked because the contract wasn't the canonical one. Custody and offline vault signing and wallet platform flows can now handle it. Allowances are set in the SDK, are pair-specific and expire.",
+   "audience": [
+    "Staking users",
+    "Custody clients",
+    "Wallet API developers"
+   ],
+   "productArea": "Staking & DeFi",
+   "confidence": "medium",
+   "needsAttention": {
+    "pmm": false,
+    "design": false,
+    "docs": true
+   }
+  },
+  "2e03c9f1363e6baac748197c6f0a311aaf75eee02a492be194871ce76e10c953": {
+   "id": "bitgojs-10066",
+   "isCustomerFacing": true,
+   "title": "Corrected Canton test token contract addresses",
+   "oneLiner": "Contract addresses for 499 Canton test tokens were updated to match the official token export.",
+   "whyItMatters": "Accurate contract addresses help Canton test tokens resolve and transact correctly. Only the address format changed; no tokens were added and non-Canton tokens were untouched.",
+   "audience": [
+    "Wallet API developers",
+    "Institutional clients"
+   ],
+   "productArea": "Asset Support",
+   "confidence": "medium",
+   "needsAttention": {
+    "pmm": false,
+    "design": false,
+    "docs": false
+   }
+  },
+  "638b5ee3034cfb944738de1b406c3e84289e222bfd3b7b4072f5e2a4f419bace": {
+   "id": "rollup-canton-broadridge-standing-delegation",
+   "isCustomerFacing": true,
+   "title": "Canton Broadridge delegation and settlement support",
+   "oneLiner": "The SDK now supports Broadridge standing delegation on Canton, plus allocation and settlement authorization flows and receive-only allocations for cross-issuer trades.",
+   "whyItMatters": "Lets customers' developers build and sign Broadridge-related Canton transactions, including cross-issuer delivery-versus-payment settlements, through the BitGo SDK. This extends BitGo's Canton coverage for institutional settlement workflows.",
+   "audience": [
+    "Wallet API developers",
+    "Institutional clients"
+   ],
+   "productArea": "Asset Support",
+   "confidence": "medium",
+   "needsAttention": {
+    "pmm": false,
+    "design": false,
+    "docs": true
+   }
+  },
+  "74b89295324db3a401a5895d88d3e83c4123b70e4161413343a391225c67be5d": {
+   "id": "defi-1184",
+   "isCustomerFacing": false,
+   "title": "Message signing finalization fix, then reverted",
+   "oneLiner": "A fix to how message signing finishes for DeFi policy flows was merged, then reverted. The net result is no change.",
+   "whyItMatters": "The fix addressed an error after approval and re-sign of message-signing requests. Since it was reverted, the issue may still be open. The reason for the revert isn't stated.",
+   "audience": [
+    "Operations"
+   ],
+   "productArea": "Security & Key Management",
+   "confidence": "low",
+   "needsAttention": {
+    "pmm": false,
+    "design": false,
+    "docs": false
+   }
+  },
+  "ccef0304160507dc03566cc71a1e2f02384fe87a24935a0a5103622e35aada9f": {
+   "id": "wcn-3802",
+   "isCustomerFacing": false,
+   "title": "Fix beta release preparation step",
+   "oneLiner": "Internal release tooling now skips a private, unpublished package so beta release preparation no longer fails.",
+   "whyItMatters": "Keeps the internal beta release process running reliably. No customer-visible change.",
+   "audience": [
+    "Engineering"
+   ],
+   "productArea": "Platform & Infrastructure",
+   "confidence": "high",
+   "needsAttention": {
+    "pmm": false,
+    "design": false,
+    "docs": false
+   }
+  },
+  "0273fc8e79ebb803543d5c325ca8cdd7de8f66edec2c29ca95823091bc1ce37a": {
+   "id": "wal-2216",
+   "isCustomerFacing": false,
+   "title": "Fix weekly dependency-pruning automation",
+   "oneLiner": "An internal weekly cleanup job was failing because of an outdated AI model setting. It now uses a newer model.",
+   "whyItMatters": "Keeps internal maintenance automation running. No customer impact.",
+   "audience": [
+    "Engineering"
+   ],
+   "productArea": "Platform & Infrastructure",
+   "confidence": "high",
+   "needsAttention": {
+    "pmm": false,
+    "design": false,
+    "docs": false
+   }
+  },
+  "9e187d1112e569b1b4b9e2809e8fb9d10710c5e0b8e51663fc000b1ab40dbbcc": {
+   "id": "wcn-3304",
+   "isCustomerFacing": false,
+   "title": "Advanced wallets Node runtime upgrade",
+   "oneLiner": "The advanced wallets service runtime was upgraded to a newer Node version, with security fixes and updated documentation.",
+   "whyItMatters": "Keeps the service on a supported, patched runtime. Customers who self-host should note the updated Node prerequisite in the README.",
+   "audience": [
+    "Operations",
+    "Engineering"
+   ],
+   "productArea": "Platform & Infrastructure",
+   "confidence": "medium",
+   "needsAttention": {
+    "pmm": false,
+    "design": false,
+    "docs": false
+   }
+  },
+  "d17be85fd321fd106ac4523f0e628002c2275d2b7520f365cace06d68a4bd82e": {
+   "id": "wcn-3734",
+   "isCustomerFacing": true,
+   "title": "Express Docker image moves to Node 24",
+   "oneLiner": "The BitGo Express Docker image now runs on Node 24 instead of Node 22, matching the version used in the project's own configuration.",
+   "whyItMatters": "Customers who self-host the image get a newer runtime. The PR flags this as a major-version change that could affect native modules, so self-hosting customers should test before upgrading.",
+   "audience": [
+    "Self-hosting Express customers",
+    "Wallet API developers",
+    "Operations"
+   ],
+   "productArea": "Platform & Infrastructure",
+   "confidence": "medium",
+   "needsAttention": {
+    "pmm": false,
+    "design": false,
+    "docs": true
+   }
+  },
+  "74689185d92c9ba3d8f52281c4dbc7ce118158a54c1487be71f040d5751687d1": {
+   "id": "coins-1940",
+   "isCustomerFacing": true,
+   "title": "Express no longer hangs on failed sends",
+   "oneLiner": "Fixes a bug where BitGo Express never replied when a send failed partway, leaving clients with a 503 timeout. Errors now return properly.",
+   "whyItMatters": "Developers now get a clear error when a send fails, rather than a hanging request and timeout. This makes failed sends easier to diagnose and handle.",
+   "audience": [
+    "Wallet API developers",
+    "Self-hosting Express customers"
+   ],
+   "productArea": "Developer Platform",
+   "confidence": "high",
+   "needsAttention": {
+    "pmm": false,
+    "design": false,
+    "docs": false
+   }
+  },
+  "9efcfeb999ebeadf44a51d03d18e05c72b332f46439d5411d67523d7fb1c68da": {
+   "id": "wcn-3754",
+   "isCustomerFacing": true,
+   "title": "XLM and HBAR recovery supports external signers",
+   "oneLiner": "Stellar (XLM) and Hedera (HBAR) wallet recovery now uses a shared external signer, and a backup key is optional when one is supplied.",
+   "whyItMatters": "Customers can sign recovery transactions with their own external signing setup instead of handing over a backup key. A safeguard also stops signed data from being altered after signing.",
+   "audience": [
+    "Wallet API developers",
+    "Institutional clients"
+   ],
+   "productArea": "Wallets & Custody",
+   "confidence": "medium",
+   "needsAttention": {
+    "pmm": false,
+    "design": false,
+    "docs": true
+   }
+  },
+  "f60d39db6549660ddcc6204f028f34b7d7ff77078472a341d6dd42aefd1b6ef7": {
+   "id": "cshld-2028",
+   "isCustomerFacing": false,
+   "title": "UTXO library: checked randomizer and signing path",
+   "oneLiner": "Internal update to the UTXO WASM library that consolidates randomizer handling and spend-signature creation into one checked path. The PR gives no further detail.",
+   "whyItMatters": "The purpose is unclear from the input. It looks like groundwork for shielded-transaction support, but that is not confirmed, so it isn't clearly customer-visible.",
+   "audience": [
+    "Engineering"
+   ],
+   "productArea": "Platform & Infrastructure",
+   "confidence": "low",
+   "needsAttention": {
+    "pmm": false,
+    "design": false,
+    "docs": false
+   }
+  },
+  "1a76bc7660161449f8cd06a3948d22a2ad117ecabed47ec5d8f7f61929693a64": {
+   "id": "cshld-2027",
+   "isCustomerFacing": false,
+   "title": "UTXO library: KMS ciphertext and proof helpers",
+   "oneLiner": "Adds helper functions to the UTXO WASM library for KMS output ciphertext and proofs. The PR gives no further detail.",
+   "whyItMatters": "The purpose is unclear from the input. It appears to be developer-level groundwork rather than a change customers would see directly.",
+   "audience": [
+    "Engineering"
+   ],
+   "productArea": "Platform & Infrastructure",
+   "confidence": "low",
+   "needsAttention": {
+    "pmm": false,
+    "design": false,
+    "docs": false
+   }
+  },
+  "0d8aec8c58ef35281273f016e20f8d77a11f1ed802f32838f0632d042a97ee87": {
+   "id": "cshld-1989",
+   "isCustomerFacing": true,
+   "title": "Grass (Solana) token support for Go Accounts",
+   "oneLiner": "Adds the Grass token on Solana to Go Accounts so incoming Grass deposits can be credited to the customer's account.",
+   "whyItMatters": "Before this, Grass deposits arrived as unmatched deposits and couldn't be credited to Go Accounts. Customers can now hold and use Grass there. Rollout still needs a statics publish and a Prime release.",
+   "audience": [
+    "Go Account customers",
+    "Institutional clients"
+   ],
+   "productArea": "Go Accounts & Trading",
+   "confidence": "high",
+   "needsAttention": {
+    "pmm": false,
+    "design": false,
+    "docs": true
+   }
+  },
+  "ba584eb797465aad128283e1119268e2b6210de514eec2c21caef36f0543cc14": {
+   "id": "cshld-2013",
+   "isCustomerFacing": true,
+   "title": "Zcash NU7 network upgrade support",
+   "oneLiner": "Prepares Zcash wallets and recovery for the NU7 network upgrade, expected around 5 Nov 2026, using the correct transaction format after activation.",
+   "whyItMatters": "Without this, Zcash transactions and recoveries made after the upgrade could be signed but fail to broadcast. It keeps ZEC transfers and recovery working through the network change.",
+   "audience": [
+    "Zcash wallet users",
+    "Institutional clients",
+    "Wallet API developers"
+   ],
+   "productArea": "Asset Support",
+   "confidence": "high",
+   "needsAttention": {
+    "pmm": true,
+    "design": false,
+    "docs": true
+   }
+  },
+  "be6140c56fd1e3c5cb9aa8348a79d7cd2208d11f2f16d03a10fd637837378071": {
+   "id": "cshld-2022",
+   "isCustomerFacing": false,
+   "title": "Generic parsed-input types for UTXO library",
+   "oneLiner": "Adds shared internal data types for reading transaction inputs, including Zcash-specific ones, in the UTXO library. The PR gives no more detail.",
+   "whyItMatters": "This looks like developer-facing groundwork for Zcash and UTXO handling. The input has no description, so the customer impact is unclear.",
+   "audience": [
+    "Engineering"
+   ],
+   "productArea": "Platform & Infrastructure",
+   "confidence": "low",
+   "needsAttention": {
+    "pmm": false,
+    "design": false,
+    "docs": false
+   }
+  },
+  "f2a8b541aba25f10dfb4c0f801e186970cafe215a6b43da051c1d899664a5aa0": {
+   "id": "chalo-1603",
+   "isCustomerFacing": true,
+   "title": "Solana v1 transaction version now honored in SDK",
+   "oneLiner": "The SDK now passes a requested Solana transaction version (v0 or v1) through to the wallet platform. Before, it silently dropped the setting.",
+   "whyItMatters": "Developers asking for Solana v1 payments always got v0 transactions with no error or warning. This fix lets integrators build the transaction version they request.",
+   "audience": [
+    "Wallet API developers",
+    "Institutional clients"
+   ],
+   "productArea": "Developer Platform",
+   "confidence": "high",
+   "needsAttention": {
+    "pmm": false,
+    "design": false,
+    "docs": true
+   }
+  },
+  "060cf377675591fb50cff9a72078fa0f5f71c0564d9add96cc527c2625c8c3a6": {
+   "id": "cecho-2510",
+   "isCustomerFacing": false,
+   "title": "Fix token test for cross-chain address reuse",
+   "oneLiner": "Corrects an internal test that wrongly rejected the same token contract address on different blockchains.",
+   "whyItMatters": "This is a test-only change, so customers see no effect. It stops false failures when the same token address legitimately appears on more than one chain.",
+   "audience": [
+    "Engineering"
+   ],
+   "productArea": "Platform & Infrastructure",
+   "confidence": "high",
+   "needsAttention": {
+    "pmm": false,
+    "design": false,
+    "docs": false
+   }
+  },
+  "b8751b8870f080cd67c93bc93f5203b877210843f4e88ad059cdb219f6424f8e": {
+   "id": "sc-573",
+   "isCustomerFacing": true,
+   "title": "SUI recovery and sweep move to gRPC",
+   "oneLiner": "The SDK now talks to SUI nodes over gRPC instead of the deprecated JSON-RPC, keeping SUI recovery and sweep flows working.",
+   "whyItMatters": "Sui is retiring JSON-RPC and public providers will follow. Without this change, SUI recovery and sweep flows would break. Developers get a new per-environment gRPC endpoint setting.",
+   "audience": [
+    "Wallet API developers",
+    "SDK users",
+    "Operations"
+   ],
+   "productArea": "Wallets & Custody",
+   "confidence": "high",
+   "needsAttention": {
+    "pmm": false,
+    "design": false,
+    "docs": true
+   }
+  },
+  "5ce4032fb3818cb24230107c6fef4a81bffe34624ed6e0c6318f3961d4ecc686": {
+   "id": "cecho-2462",
+   "isCustomerFacing": false,
+   "title": "Pass Hardhat config secrets as environment variables",
+   "oneLiner": "Internal fix so all secrets used by the Ethereum multisig contract tooling configuration are supplied as environment variables.",
+   "whyItMatters": "Internal build and deployment tooling change. No direct customer impact is described.",
+   "audience": [
+    "Engineering"
+   ],
+   "productArea": "Platform & Infrastructure",
+   "confidence": "low",
+   "needsAttention": {
+    "pmm": false,
+    "design": false,
+    "docs": false
+   }
+  },
+  "6b88909245d32843f513aac879f23cb848df944ba096b7ba778ee19e7b19f7f9": {
+   "id": "coins-1760",
+   "isCustomerFacing": true,
+   "title": "Fix TIA withdrawals to memo-tagged recipients",
+   "oneLiner": "Withdrawals of TIA (Celestia) to recipients with a memo no longer fail local validation with a false outputs-mismatch error.",
+   "whyItMatters": "Memo-tagged addresses are common for exchange deposits. Before the fix, these TIA withdrawals were wrongly rejected, even though the built transaction was correct. Customers can now send them.",
+   "audience": [
+    "Wallet API developers",
+    "Institutional clients"
+   ],
+   "productArea": "Asset Support",
+   "confidence": "high",
+   "needsAttention": {
+    "pmm": false,
+    "design": false,
+    "docs": false
+   }
+  },
+  "d33734176531827238d2f5affbf5265a64062960a23644f29a32e81f28c6a007": {
+   "id": "chalo-1883",
+   "isCustomerFacing": true,
+   "title": "Solana confidential transfer token enablement",
+   "oneLiner": "Token enablement in the SDK now supports Solana confidential transfers. It can create the token account and configure it for confidential transfers in one transaction.",
+   "whyItMatters": "Customers' developers can enable Solana tokens for confidential transfers with a single transaction. It also fixes an instruction layout issue in the account configuration step and adds an opt-out flag.",
+   "audience": [
+    "Wallet API developers",
+    "Institutional clients"
+   ],
+   "productArea": "Asset Support",
+   "confidence": "medium",
+   "needsAttention": {
+    "pmm": true,
+    "design": false,
+    "docs": true
+   }
+  },
+  "a7bfec805328f52667a9eba2a7e0eb9434f447dea51ac1eb8787fbce21a8262e": {
+   "id": "wci-926",
+   "isCustomerFacing": true,
+   "title": "EdDSA MPCv2 signing in Advanced Wallets",
+   "oneLiner": "Master Express now supports signing for EdDSA wallets on the newer MPCv2 protocol. It automatically routes to the right flow based on wallet version.",
+   "whyItMatters": "EdDSA MPCv2 wallets can sign transactions through the external signer setup. Existing MPCv1 EdDSA wallets and ECDSA wallets continue to work as before.",
+   "audience": [
+    "Advanced wallet customers",
+    "Wallet API developers"
+   ],
+   "productArea": "Wallets & Custody",
+   "confidence": "medium",
+   "needsAttention": {
+    "pmm": false,
+    "design": false,
+    "docs": true
+   }
+  },
+  "8eb84a82bfd6e173db21dabde4199b8ee102f24150ca8e9ff074bd72dddc253b": {
+   "id": "wcn-3077",
+   "isCustomerFacing": true,
+   "title": "Change safe MPC child key derivation encoding",
+   "oneLiner": "The path used to derive safe child keys for MPC wallets is now encoded as UTF-8 text bytes. Key creation and offline recovery both use it.",
+   "whyItMatters": "Every party must use the same encoding, or the derived child keys differ. This keeps key creation and offline recovery consistent. Teams should check compatibility with any previously derived keys.",
+   "audience": [
+    "Wallet API developers",
+    "Institutional clients"
+   ],
+   "productArea": "Security & Key Management",
+   "confidence": "medium",
+   "needsAttention": {
+    "pmm": false,
+    "design": false,
+    "docs": true
+   }
+  },
+  "e4b396dd7bf23538d8887d98ccc605d1280188ea647e2b66a767454c04a19133": {
+   "id": "chalo-1256",
+   "isCustomerFacing": true,
+   "title": "ERC-7984 shield/unshield checks for multisig ETH wallets",
+   "oneLiner": "Adds transaction verification safeguards so custodial Ethereum multi-signature wallets can safely perform ERC-7984 shield and unshield operations, including approval checks and rejection of unexpected recipients.",
+   "whyItMatters": "Extends confidential-token shield/unshield support to custodial ETH multi-sig wallets. The added checks help block tampered or mislabeled approvals before signing, which reduces the risk of a compromised server altering a transaction.",
+   "audience": [
+    "Custody clients",
+    "Wallet API developers",
+    "SDK developers"
+   ],
+   "productArea": "Security & Key Management",
+   "confidence": "medium",
+   "needsAttention": {
+    "pmm": false,
+    "design": false,
+    "docs": true
+   }
+  },
+  "1b99338646efb3f13b4f257da833c874d02f65b01ef31d416418aabbabb06142": {
+   "id": "wci-924",
+   "isCustomerFacing": true,
+   "title": "EdDSA MPCv2 signing in advanced wallets",
+   "oneLiner": "Adds EdDSA multi-party signing support, in three rounds, to the master Express service for advanced wallets, mirroring the existing ECDSA flow.",
+   "whyItMatters": "Lets advanced wallets sign with EdDSA-based assets using the newer MPC protocol. Out-of-order signing rounds produce clear errors. Customer impact is inferred from the PR description and may be limited to self-hosted setups.",
+   "audience": [
+    "Advanced wallet operators",
+    "Wallet API developers"
+   ],
+   "productArea": "Wallets & Custody",
+   "confidence": "medium",
+   "needsAttention": {
+    "pmm": false,
+    "design": false,
+    "docs": true
+   }
+  },
+  "04779389a658f4871f8938a013ac0db1310208e6942094242a3d8e7ef9468b98": {
+   "id": "cshld-1927",
+   "isCustomerFacing": true,
+   "title": "Fix broken HyperEVM testnet explorer links",
+   "oneLiner": "HyperEVM testnet (thype) transaction and address links now open hyperscan.sh. The old explorer shut down, so those links returned 404 errors.",
+   "whyItMatters": "Users and developers can view testnet transactions and addresses again. The new explorer's indexer may lag, according to a caveat in the PR.",
+   "audience": [
+    "Wallet users",
+    "SDK developers"
+   ],
+   "productArea": "Asset Support",
+   "confidence": "high",
+   "needsAttention": {
+    "pmm": false,
+    "design": false,
+    "docs": false
+   }
+  },
+  "5fb855b4216549f7651a857b3dc254acf815000f53380acd1ecb96c907563b51": {
+   "id": "chalo-1850",
+   "isCustomerFacing": true,
+   "title": "Canton participant allow-list command builders",
+   "oneLiner": "Adds SDK helpers to build Canton v3 commands that add or remove wallets on a participant's allow-list, using end-investor credentials.",
+   "whyItMatters": "Lets developers manage allow-lists for DTCC Canton v3 participants in code, with identifier validation. This supports regulated, permissioned Canton workflows.",
+   "audience": [
+    "SDK developers",
+    "Institutional clients"
+   ],
+   "productArea": "Asset Support",
+   "confidence": "medium",
+   "needsAttention": {
+    "pmm": false,
+    "design": false,
+    "docs": true
+   }
+  },
+  "23244d5b3010f50f16d76ef805d4fd9d9d38d6c409a1f3608ba419c500563261": {
+   "id": "wci-1949",
+   "isCustomerFacing": true,
+   "title": "Multi-spend shielded Zcash signing support",
+   "oneLiner": "Updates the signing logic for shielded Zcash transactions so one transaction can sign several spends at once, instead of only one.",
+   "whyItMatters": "Supports onboarding of Zcash privacy transactions that need multiple spends. The PR cites a critical delivery timeline.",
+   "audience": [
+    "SDK developers",
+    "Institutional clients"
+   ],
+   "productArea": "Asset Support",
+   "confidence": "medium",
+   "needsAttention": {
+    "pmm": false,
+    "design": false,
+    "docs": false
+   }
+  }
+ },
  "digests": {
   "417002028e511228b84b3895c427db4c150d027e762e0f63cf6ed7ed9e1723bb": [
    "Confidential tokens go live: six mainnet Zama token pairs can now be shielded and unshielded, ZAMA staking appears for Ethereum wallets, and wrap/unwrap fixes and safety checks cover multisig wallets.",
