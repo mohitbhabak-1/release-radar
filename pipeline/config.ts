@@ -3,6 +3,11 @@ import { resolve } from "node:path";
 import { parse } from "yaml";
 import { z } from "zod";
 
+const AreaSchema = z.union([
+  z.string().transform((name) => ({ name, description: "" })),
+  z.object({ name: z.string().min(1), description: z.string().default("") }),
+]);
+
 const ConfigSchema = z.object({
   lookback_days: z.number().int().positive(),
   lookahead_days: z.number().int().nonnegative(),
@@ -25,7 +30,7 @@ const ConfigSchema = z.object({
     include_states: z.array(z.string()).default([]),
   }),
   rollups: z.array(z.object({ name: z.string().min(1), pattern: z.string().min(1) })).default([]),
-  product_areas: z.array(z.string()).default([]),
+  product_areas: z.array(AreaSchema).default([]),
   llm: z.object({
     provider: z.enum(["openrouter"]).default("openrouter"),
     model: z.string(),

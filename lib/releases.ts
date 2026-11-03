@@ -7,6 +7,7 @@ export type ReleasesFile = {
   generatedAt: string | null;
   lookbackDays: number;
   refresh?: { status: "ok" | "partial" | "failed"; sources: { name: string; ok: boolean }[] };
+  areas?: string[]; // configured product domains, in display order
   scanned?: { org: string; repos: string[] };
   digest?: { bullets: string[]; countsByStage: Record<string, number> };
   features: FeatureRecord[];

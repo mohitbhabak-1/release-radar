@@ -36,9 +36,26 @@ rollups:
   - name: "Canton Broadridge standing delegation"
     pattern: "broadridge"
 
-# Empty = the LLM infers a short product-area name per feature.
-# Fill in later to force a canonical list.
-product_areas: []
+# Product domains. Every feature is assigned exactly one (the domain of the customer benefit, not the
+# code layer: an SDK change that enables wallet recovery is "Wallets & Custody"). Edit freely; existing
+# summaries whose domain isn't on this list are re-assigned on the next refresh at small cost.
+product_areas:
+  - name: "Wallets & Custody"
+    description: "Creating, signing, approving, recovering and managing custodial, MPC and multisig wallets and keycards"
+  - name: "Asset Support"
+    description: "New coins, tokens, chains and network upgrades supported across BitGo, including token onboarding"
+  - name: "Staking & DeFi"
+    description: "Staking, delegation, yield and on-chain protocol or DeFi features"
+  - name: "Go Accounts & Trading"
+    description: "Go Accounts, settlement, trading and exchange-related capabilities"
+  - name: "Security & Key Management"
+    description: "Signing safeguards, key handling, approval policies, privacy and cryptographic protections"
+  - name: "Developer Platform"
+    description: "Public APIs, SDKs, Express and tooling used mainly by client developers, when no other domain fits"
+  - name: "Platform & Infrastructure"
+    description: "Runtime, build, release, reliability and internal platform changes"
+  - name: "Other"
+    description: "Anything that fits none of the above"
 
 llm:
   provider: "openrouter"           # key in OPENROUTER_API_KEY

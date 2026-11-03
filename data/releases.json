@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-11-02T23:52:35.592Z",
+  "generatedAt": "2026-11-03T00:04:07.499Z",
   "lookbackDays": 14,
   "refresh": {
     "status": "ok",
@@ -10,6 +10,16 @@
       }
     ]
   },
+  "areas": [
+    "Wallets & Custody",
+    "Asset Support",
+    "Staking & DeFi",
+    "Go Accounts & Trading",
+    "Security & Key Management",
+    "Developer Platform",
+    "Platform & Infrastructure",
+    "Other"
+  ],
   "scanned": {
     "org": "BitGo",
     "repos": [
@@ -21,11 +31,11 @@
   },
   "digest": {
     "bullets": [
-      "Confidential tokens (ERC-7984): shield and unshield now work on mainnet for six Zama token pairs, with new safety checks and fixes for multisig wallets. ZAMA can also be staked on Ethereum wallets.",
-      "Wallet recovery widened: Safe wallet keycards now recover funds across many chains, including EVM, SOL, ADA and XLM. XLM and HBAR recovery also supports external signers.",
-      "Stacks staking: the SDK now supports configured PoX-5 contracts, and offline vault and descriptor wallets can check and half-sign PoX-5 early exits before signing.",
-      "New asset support: ZAR Universal on ARC and XRP, plus the Grass token on Solana for Go Accounts, so incoming Grass deposits can be credited.",
-      "Fuller Stellar transaction explanations before signing: every account-settings change is now shown, and unsupported operations are flagged. Stellar tokens with digits in their names now work for withdrawals."
+      "Confidential tokens go live: six mainnet Zama token pairs can now be shielded and unshielded, ZAMA staking appears for Ethereum wallets, and wrap/unwrap fixes and safety checks cover multisig wallets.",
+      "Wallet recovery widens: Safe wallet keycards can now recover funds on many chains, including Solana, Cardano and Stellar. XLM and HBAR recovery also supports external signers.",
+      "Stacks staking and Zcash get ready for upcoming changes: PoX-5 contracts and early exits are supported, and Zcash wallets are prepped for the NU7 upgrade expected around 5 Nov 2026.",
+      "New asset support: ZAR Universal on ARC and XRP, Grass on Solana for Go Accounts, and Canton Broadridge delegation and settlement flows.",
+      "Safer signing and fewer SDK errors: Stellar transaction explanations show more account changes before signing, and fixes cover SDK message-signing crashes and Express hanging on failed sends."
     ],
     "countsByStage": {
       "Shipped": 43,
@@ -47,7 +57,7 @@
         "Institutional clients",
         "Wallet API developers"
       ],
-      "productArea": "Wallets",
+      "productArea": "Asset Support",
       "stage": "Shipped",
       "expectedDate": "2026-11-02",
       "confidence": "medium",
@@ -93,7 +103,7 @@
         "Wallet API developers",
         "Operations"
       ],
-      "productArea": "Wallets",
+      "productArea": "Wallets & Custody",
       "stage": "Shipped",
       "expectedDate": "2026-11-02",
       "confidence": "high",
@@ -238,7 +248,7 @@
         "Institutional clients",
         "Wallet API developers"
       ],
-      "productArea": "Wallets",
+      "productArea": "Asset Support",
       "stage": "Shipped",
       "expectedDate": "2026-11-02",
       "confidence": "low",
@@ -347,7 +357,7 @@
         "Wallet API developers",
         "Operations"
       ],
-      "productArea": "Security",
+      "productArea": "Security & Key Management",
       "stage": "Shipped",
       "expectedDate": "2026-11-02",
       "confidence": "high",
@@ -391,7 +401,7 @@
       "audience": [
         "Wallet API developers"
       ],
-      "productArea": "API/SDK",
+      "productArea": "Asset Support",
       "stage": "Shipped",
       "expectedDate": "2026-11-01",
       "confidence": "low",
@@ -436,7 +446,7 @@
         "Wallet API developers",
         "SDK developers"
       ],
-      "productArea": "API/SDK",
+      "productArea": "Developer Platform",
       "stage": "Shipped",
       "expectedDate": "2026-10-31",
       "confidence": "medium",
@@ -496,7 +506,7 @@
         "Institutional clients",
         "Wallet API developers"
       ],
-      "productArea": "Wallets",
+      "productArea": "Asset Support",
       "stage": "Shipped",
       "expectedDate": "2026-10-31",
       "confidence": "medium",
@@ -542,7 +552,7 @@
         "SDK developers",
         "Wallet API developers"
       ],
-      "productArea": "API/SDK",
+      "productArea": "Platform & Infrastructure",
       "stage": "Shipped",
       "expectedDate": "2026-10-30",
       "confidence": "medium",
@@ -588,7 +598,7 @@
         "Wallet API developers",
         "Institutional clients"
       ],
-      "productArea": "API/SDK",
+      "productArea": "Asset Support",
       "stage": "Shipped",
       "expectedDate": "2026-10-30",
       "confidence": "low",
@@ -717,7 +727,7 @@
         "Institutional clients",
         "Wallet API developers"
       ],
-      "productArea": "Wallets",
+      "productArea": "Wallets & Custody",
       "stage": "Shipped",
       "expectedDate": "2026-10-29",
       "confidence": "medium",
@@ -762,7 +772,7 @@
         "Institutional clients",
         "Wallet API developers"
       ],
-      "productArea": "Wallets",
+      "productArea": "Asset Support",
       "stage": "Shipped",
       "expectedDate": "2026-10-29",
       "confidence": "medium",
@@ -810,7 +820,7 @@
         "Wallet API developers",
         "Institutional clients"
       ],
-      "productArea": "API/SDK",
+      "productArea": "Asset Support",
       "stage": "Shipped",
       "expectedDate": "2026-10-29",
       "confidence": "medium",
@@ -855,7 +865,7 @@
         "Wallet API developers",
         "SDK users"
       ],
-      "productArea": "API/SDK",
+      "productArea": "Platform & Infrastructure",
       "stage": "Shipped",
       "expectedDate": "2026-10-29",
       "confidence": "medium",
@@ -914,7 +924,7 @@
         "Wallet API developers",
         "Institutional clients"
       ],
-      "productArea": "Wallets",
+      "productArea": "Asset Support",
       "stage": "Shipped",
       "expectedDate": "2026-10-28",
       "confidence": "low",
@@ -958,7 +968,7 @@
       "audience": [
         "Wallet API developers"
       ],
-      "productArea": "Wallets",
+      "productArea": "Asset Support",
       "stage": "Shipped",
       "expectedDate": "2026-10-28",
       "confidence": "low",
@@ -1002,7 +1012,7 @@
       "audience": [
         "Internal engineering"
       ],
-      "productArea": "Infrastructure",
+      "productArea": "Asset Support",
       "stage": "Shipped",
       "expectedDate": "2026-10-28",
       "confidence": "medium",
@@ -1048,7 +1058,7 @@
         "Custody operations",
         "Wallet API developers"
       ],
-      "productArea": "Staking",
+      "productArea": "Staking & DeFi",
       "stage": "Shipped",
       "expectedDate": "2026-10-28",
       "confidence": "medium",
@@ -1107,7 +1117,7 @@
         "Wallet API developers",
         "Institutional clients"
       ],
-      "productArea": "Wallets",
+      "productArea": "Security & Key Management",
       "stage": "Shipped",
       "expectedDate": "2026-10-28",
       "confidence": "low",
@@ -1152,7 +1162,7 @@
         "Institutional clients",
         "Wallet API developers"
       ],
-      "productArea": "Wallets",
+      "productArea": "Go Accounts & Trading",
       "stage": "Shipped",
       "expectedDate": "2026-10-28",
       "confidence": "low",
@@ -1197,7 +1207,7 @@
         "Wallet API developers",
         "Institutional clients"
       ],
-      "productArea": "Wallets",
+      "productArea": "Staking & DeFi",
       "stage": "Shipped",
       "expectedDate": "2026-10-28",
       "confidence": "medium",
@@ -1268,7 +1278,7 @@
       "audience": [
         "Wallet API developers"
       ],
-      "productArea": "API/SDK",
+      "productArea": "Developer Platform",
       "stage": "Shipped",
       "expectedDate": "2026-10-28",
       "confidence": "medium",
@@ -1313,7 +1323,7 @@
         "Wallet API developers",
         "Institutional clients"
       ],
-      "productArea": "Wallets",
+      "productArea": "Asset Support",
       "stage": "Shipped",
       "expectedDate": "2026-10-27",
       "confidence": "medium",
@@ -1362,7 +1372,7 @@
         "Institutional clients",
         "Staking users"
       ],
-      "productArea": "Staking",
+      "productArea": "Staking & DeFi",
       "stage": "Shipped",
       "expectedDate": "2026-10-27",
       "confidence": "high",
@@ -1408,7 +1418,7 @@
         "Wallet API developers",
         "Custody clients"
       ],
-      "productArea": "API/SDK",
+      "productArea": "Asset Support",
       "stage": "Shipped",
       "expectedDate": "2026-10-27",
       "confidence": "low",
@@ -1454,7 +1464,7 @@
         "Institutional clients",
         "Support"
       ],
-      "productArea": "Wallets",
+      "productArea": "Wallets & Custody",
       "stage": "Shipped",
       "expectedDate": "2026-10-26",
       "confidence": "medium",
@@ -1501,7 +1511,7 @@
         "Custody clients",
         "Wallet API developers"
       ],
-      "productArea": "Staking",
+      "productArea": "Staking & DeFi",
       "stage": "Shipped",
       "expectedDate": "2026-10-26",
       "confidence": "medium",
@@ -1563,7 +1573,7 @@
         "Wallet API developers",
         "Institutional clients"
       ],
-      "productArea": "API/SDK",
+      "productArea": "Asset Support",
       "stage": "Shipped",
       "expectedDate": "2026-10-26",
       "confidence": "low",
@@ -1606,7 +1616,7 @@
         "Wallet API developers",
         "Institutional clients"
       ],
-      "productArea": "API/SDK",
+      "productArea": "Asset Support",
       "stage": "Shipped",
       "expectedDate": "2026-10-26",
       "confidence": "medium",
@@ -1695,7 +1705,7 @@
       "audience": [
         "Operations"
       ],
-      "productArea": "API/SDK",
+      "productArea": "Security & Key Management",
       "stage": "Shipped",
       "expectedDate": "2026-10-26",
       "confidence": "low",
@@ -1753,7 +1763,7 @@
       "audience": [
         "Engineering"
       ],
-      "productArea": "Infrastructure",
+      "productArea": "Platform & Infrastructure",
       "stage": "Shipped",
       "expectedDate": "2026-10-23",
       "confidence": "medium",
@@ -1797,7 +1807,7 @@
       "audience": [
         "Engineering"
       ],
-      "productArea": "Infrastructure",
+      "productArea": "Platform & Infrastructure",
       "stage": "Shipped",
       "expectedDate": "2026-10-23",
       "confidence": "medium",
@@ -1842,7 +1852,7 @@
         "Operations",
         "Engineering"
       ],
-      "productArea": "Infrastructure",
+      "productArea": "Platform & Infrastructure",
       "stage": "Shipped",
       "expectedDate": "2026-10-23",
       "confidence": "medium",
@@ -1917,7 +1927,7 @@
         "Wallet API developers",
         "Operations"
       ],
-      "productArea": "Infrastructure",
+      "productArea": "Platform & Infrastructure",
       "stage": "Shipped",
       "expectedDate": "2026-10-23",
       "confidence": "medium",
@@ -1962,7 +1972,7 @@
         "Wallet API developers",
         "Self-hosting Express customers"
       ],
-      "productArea": "API/SDK",
+      "productArea": "Developer Platform",
       "stage": "Shipped",
       "expectedDate": "2026-10-23",
       "confidence": "medium",
@@ -2007,7 +2017,7 @@
         "Wallet API developers",
         "Institutional clients"
       ],
-      "productArea": "Wallets",
+      "productArea": "Wallets & Custody",
       "stage": "Shipped",
       "expectedDate": "2026-10-23",
       "confidence": "medium",
@@ -2051,7 +2061,7 @@
       "audience": [
         "Engineering"
       ],
-      "productArea": "API/SDK",
+      "productArea": "Platform & Infrastructure",
       "stage": "Shipped",
       "expectedDate": "2026-10-23",
       "confidence": "low",
@@ -2095,7 +2105,7 @@
       "audience": [
         "Engineering"
       ],
-      "productArea": "API/SDK",
+      "productArea": "Platform & Infrastructure",
       "stage": "Shipped",
       "expectedDate": "2026-10-22",
       "confidence": "low",
@@ -2140,7 +2150,7 @@
         "Go Account customers",
         "Institutional clients"
       ],
-      "productArea": "Go Accounts",
+      "productArea": "Go Accounts & Trading",
       "stage": "Shipped",
       "expectedDate": "2026-10-22",
       "confidence": "medium",
@@ -2187,7 +2197,7 @@
         "Institutional clients",
         "Wallet API developers"
       ],
-      "productArea": "Wallets",
+      "productArea": "Asset Support",
       "stage": "Shipped",
       "expectedDate": "2026-10-22",
       "confidence": "medium",
@@ -2249,7 +2259,7 @@
       "audience": [
         "Engineering"
       ],
-      "productArea": "API/SDK",
+      "productArea": "Platform & Infrastructure",
       "stage": "Shipped",
       "expectedDate": "2026-10-22",
       "confidence": "low",
@@ -2294,7 +2304,7 @@
         "Wallet API developers",
         "Institutional clients"
       ],
-      "productArea": "API/SDK",
+      "productArea": "Developer Platform",
       "stage": "Shipped",
       "expectedDate": "2026-10-22",
       "confidence": "high",
@@ -2339,7 +2349,7 @@
       "audience": [
         "Engineering"
       ],
-      "productArea": "Infrastructure",
+      "productArea": "Platform & Infrastructure",
       "stage": "Shipped",
       "expectedDate": "2026-10-22",
       "confidence": "medium",
@@ -2383,7 +2393,7 @@
       "audience": [
         "Engineering"
       ],
-      "productArea": "Infrastructure",
+      "productArea": "Platform & Infrastructure",
       "stage": "Shipped",
       "expectedDate": "2026-10-22",
       "confidence": "low",
@@ -2428,7 +2438,7 @@
         "Wallet API developers",
         "Institutional clients"
       ],
-      "productArea": "Wallets",
+      "productArea": "Asset Support",
       "stage": "Shipped",
       "expectedDate": "2026-10-22",
       "confidence": "medium",
@@ -2473,7 +2483,7 @@
         "Wallet API developers",
         "Institutional clients"
       ],
-      "productArea": "API/SDK",
+      "productArea": "Asset Support",
       "stage": "Shipped",
       "expectedDate": "2026-10-21",
       "confidence": "medium",
@@ -2518,7 +2528,7 @@
         "Advanced wallet customers",
         "Wallet API developers"
       ],
-      "productArea": "Wallets",
+      "productArea": "Wallets & Custody",
       "stage": "Shipped",
       "expectedDate": "2026-10-21",
       "confidence": "medium",
@@ -2563,7 +2573,7 @@
         "Wallet API developers",
         "Institutional clients"
       ],
-      "productArea": "Security",
+      "productArea": "Security & Key Management",
       "stage": "Shipped",
       "expectedDate": "2026-10-20",
       "confidence": "medium",
@@ -2609,7 +2619,7 @@
         "Wallet API developers",
         "SDK developers"
       ],
-      "productArea": "Wallets",
+      "productArea": "Security & Key Management",
       "stage": "Shipped",
       "expectedDate": "2026-10-19",
       "confidence": "medium",
@@ -2686,7 +2696,7 @@
         "Advanced wallet operators",
         "Wallet API developers"
       ],
-      "productArea": "Wallets",
+      "productArea": "Wallets & Custody",
       "stage": "Shipped",
       "expectedDate": "2026-10-19",
       "confidence": "medium",
@@ -2732,7 +2742,7 @@
         "Wallet users",
         "SDK developers"
       ],
-      "productArea": "Wallets",
+      "productArea": "Asset Support",
       "stage": "Shipped",
       "expectedDate": "2026-10-19",
       "confidence": "medium",
@@ -2777,7 +2787,7 @@
         "SDK developers",
         "Institutional clients"
       ],
-      "productArea": "API/SDK",
+      "productArea": "Asset Support",
       "stage": "Shipped",
       "expectedDate": "2026-10-19",
       "confidence": "medium",
@@ -2822,7 +2832,7 @@
         "SDK developers",
         "Institutional clients"
       ],
-      "productArea": "API/SDK",
+      "productArea": "Asset Support",
       "stage": "Shipped",
       "expectedDate": "2026-10-19",
       "confidence": "medium",
@@ -2869,7 +2879,7 @@
         "SDK users",
         "Operations"
       ],
-      "productArea": "API/SDK",
+      "productArea": "Wallets & Custody",
       "stage": "Shipped",
       "expectedDate": "2026-10-19",
       "confidence": "high",

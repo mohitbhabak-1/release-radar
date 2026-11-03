@@ -55,7 +55,7 @@ export default function Home() {
             )}
           </section>
 
-          <Feed features={features} />
+          <Feed features={features} areaOrder={releases.areas} />
         </>
       )}
 

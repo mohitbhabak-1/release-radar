@@ -82,6 +82,7 @@ async function main() {
         generatedAt: new Date().toISOString(),
         lookbackDays: cfg.lookback_days,
         refresh: { status: stats.skipped ? "partial" : "ok", sources: [{ name: "github", ok: true }] },
+        areas: cfg.product_areas.map((a) => a.name),
         scanned: { org: cfg.github.org, repos: [...new Set(groups.flatMap((g) => g.repos))].sort() },
         digest,
         features: records,
